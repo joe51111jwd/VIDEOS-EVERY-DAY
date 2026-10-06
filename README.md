@@ -10,5 +10,8 @@ Each idea lives in its own top-level folder.
   - `v5-src/`: Remotion and Blender source for v5 (see its README)
   - `voices/`, `music/`, `sfx/`: ElevenLabs dialogue takes, music and sound effects
   - `waitlist-site/`: source for https://riff-waitlist.vercel.app
+- [`tab-to-finish/`](tab-to-finish/): Tab to Finish, do a task twice and press Tab for the rest (Oct 6)
+  - `tab-to-finish-9x16.mp4`: the final 27 s vertical film with sound; `tab-to-finish-16x9.mp4`: the landscape layout
+  - `src-film/`: Remotion source and the ElevenLabs audio pipeline (rebuild steps in the folder README)
 
 API keys are never committed; scripts read them from environment variables.
