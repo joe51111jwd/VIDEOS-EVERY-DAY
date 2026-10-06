@@ -2,12 +2,11 @@
 // (canvas), so the audio scripts can't import it; they read timeline.json written by the TimelineDump composition.
 import {INVOICES} from './data';
 import {Field, FIELDS, PAGE_W, textBox} from './Invoice';
-import {clamp01, easeInOut, easeOut, fontsReady} from './tokens';
+import {clamp01, easeInOut, easeOut, easeSoft, fontsReady} from './tokens';
 
 export const TOTAL = 27.0;
 export const T = {
-	cut: 1.05, // flash-forward ends, cut to the wide shot
-	flashScene: 9.7, // scene time shown during the flash-forward
+	cut: 1.05, // the story starts here (scene time); in the film it starts at OPEN, after the cold open
 	scrollUp: [1.2, 2.55] as [number, number],
 	dbl: 3.0,
 	prevOpen: 3.12,
@@ -166,6 +165,38 @@ export const FLAGGED: {i: number; why: string}[] = [
 ];
 export const isFlag = (i: number) => FLAGGED.some((f) => f.i === i);
 export const SPEEDS = {VFAST, VSLOW};
+
+// ------------------------------------------------------------------ the cold open: film time 0..OPEN shows the payoff first
+// Tab pressed on frame ~10, all 198 rows fill and get checked, the done pill lands. Then the story plays from scene time
+// T.cut, shifted later by SHIFT in film time. During the open, scene time runs time-warped (openSt).
+export const OPEN = 4.6;
+export const SHIFT = OPEN - T.cut;
+export const OP = {
+	st0: 10.98, // scene time on frame 0: the pill and the Tab key, just before the press
+	cas: 0.27, // film time the cascade starts (scene time T.cascade)
+	rowsEnd: 3.0, // film time the last row lands
+	cap: [3.3, 4.5] as [number, number],
+};
+/** scene time at which n invoices are done (inverse of doneAt) */
+const stForDone = (n: number) => {
+	let a = T.cascade;
+	let b = T.casEnd;
+	for (let k = 0; k < 44; k++) {
+		const m = (a + b) / 2;
+		if (doneAt(m) < n) a = m;
+		else b = m;
+	}
+	return (a + b) / 2;
+};
+/** scene time shown at film time t (0 <= t < OPEN) */
+export const openSt = (t: number) => {
+	if (t <= OP.cas) return OP.st0 + t;
+	if (t >= OP.rowsEnd) return T.casEnd + (t - OP.rowsEnd);
+	const n = 2 + 198 * easeSoft(clamp01((t - OP.cas) / (OP.rowsEnd - OP.cas)));
+	return n <= 2 ? T.cascade : stForDone(Math.min(200, n));
+};
+/** film time -> {open, st (scene time), t (story time; negative during the open)} */
+export const filmTime = (tf: number) => (tf < OPEN ? {open: true, st: openSt(tf), t: tf - SHIFT} : {open: false, st: tf - SHIFT, t: tf - SHIFT});
 
 // ------------------------------------------------------------------ manual entry (rows 2 and 3)
 type Pt = {t: number; x: number; y: number};

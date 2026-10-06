@@ -1,5 +1,6 @@
 # Mixes the Tab to Finish soundtrack from the ElevenLabs score + SFX, timed from audio/timeline.json.
 #   avenv/bin/python audio/mix.py  ->  audio/mix.wav (48 kHz stereo, pre-master)
+# The story is mixed in story time, then placed after the cold open (film time = story time + SHIFT).
 import json, os
 import numpy as np, soundfile as sf
 from scipy.signal import butter, sosfilt, resample_poly
@@ -9,8 +10,12 @@ SR = 48000
 tl = json.load(open(f'{D}/timeline.json'))
 T = tl['T']
 TOTAL = tl['TOTAL']
+SHIFT = tl['SHIFT']
+OPEN = tl['OPEN']
 N = int((TOTAL + 0.5) * SR)
 mix = np.zeros((N, 2))
+NF = int(round((TOTAL + SHIFT) * SR))
+film = np.zeros((NF + SR, 2))
 db = lambda g: 10 ** (g / 20)
 
 
@@ -33,23 +38,25 @@ def pitch(x, r):
     return np.stack([resample_poly(x[:, c], up, down) for c in range(2)], 1)
 
 
-def add(x, t, g=0.0, pan=0.0):
+def add(x, t, g=0.0, pan=0.0, buf=None):
+    buf = mix if buf is None else buf
+    n = len(buf)
     o = int(round(t * SR))
-    if o >= N:
+    if o >= n:
         return
     if o < 0:
         x = x[-o:]
         o = 0
-    e = min(N, o + len(x))
+    e = min(n, o + len(x))
     s = x[: e - o] * db(g)
-    mix[o:e, 0] += s[:, 0] * min(1.0, 1 - pan)
-    mix[o:e, 1] += s[:, 1] * min(1.0, 1 + pan)
+    buf[o:e, 0] += s[:, 0] * min(1.0, 1 - pan)
+    buf[o:e, 1] += s[:, 1] * min(1.0, 1 + pan)
 
 
 # ------------------------------------------------------------------ score: ElevenLabs music_1, a slow build that is fully up by ~11.75 s
-music = load('music_1')
+music_raw = load('music_1')
 OFF = 0.6  # track 11.75 s (a low hit) lands on the Tab press
-music = music[int(OFF * SR):]
+music = music_raw[int(OFF * SR):]
 t = np.arange(len(music)) / SR
 # held breath: from 9.3 s the score sinks under a low-pass and dips, then snaps back exactly on the press
 sos = butter(2, 650, 'lowpass', fs=SR, output='sos')
@@ -67,7 +74,8 @@ music *= dip[:, None]
 gain = np.interp(t, [0, T['done'], T['done'] + 0.8, T['end'], T['end'] + 1.0, TOTAL - 1.4, TOTAL - 0.1], [db(1.5), db(0), db(-3.5), db(-3.5), db(-2), db(-8), 0])
 music *= gain[:, None]
 # the track's first seconds are a near-silent fade-in: lift them so the wide shot has a bed
-music *= np.interp(t, [0, 1.2, 3.0, 5.5, 8.0], [db(14), db(14), db(10), db(4), db(0)])[:, None]
+# (after the loud cold open the story's first seconds need a real bed, or the cut feels like a drop-out)
+music *= np.interp(t, [0, 1.2, 3.0, 5.5, 8.5], [db(23), db(23), db(18), db(9), db(0)])[:, None]
 # the flash-forward (first second) gets only a soft bed
 music *= np.interp(t, [0, 0.9, 1.1], [0.0, 0.0, 1.0])[:, None]
 add(music, 0, -6)
@@ -85,9 +93,8 @@ whoosh_lo = trim(load('whoosh_2'))
 riser = trim(load('riser_1'))
 boom = trim(load('boom_2'))
 
-# flash-forward: the pill's chime on frame 0, a soft whoosh into the wide shot
-add(chime, 0.02, -14)
-add(whoosh, T['cut'] - 0.12, -16)
+# a whoosh out of the cold open into the story's wide shot
+add(whoosh, T['cut'] - 0.12, -13)
 # double-click the first invoice, preview opens
 add(click, T['dbl'], -2)
 add(click, T['dbl'] + 0.13, -3)
@@ -128,7 +135,35 @@ add(whoosh, T['end'] + 0.25, -16)
 add(boom, T['end'] + 0.45, -4)
 add(pitch(chime, 0.5), T['end'] + 0.5, -16)
 
-mix = mix[: int(TOTAL * SR)]
-peak = np.abs(mix).max()
-sf.write(f'{D}/mix.wav', (mix / max(1.0, peak / 0.95)).astype(np.float32), SR, subtype='FLOAT')
-print(f'mix peak {20 * np.log10(peak):.1f} dBFS, {len(mix) / SR:.2f} s')
+# ------------------------------------------------------------------ the cold open (film time): the Tab press and all 198 rows, time-warped
+ost = np.array(tl['openSt'])  # scene time shown at each 60 fps frame of the open
+oft = np.arange(len(ost)) / 60
+open_t = lambda st: float(np.interp(st, ost, oft))  # film time a scene moment shows up in the open
+p_open = open_t(T['press'] + 0.05)  # the key is fully down
+# the score's drop (track 11.75 s) on the press, fading out into the cut
+seg = music_raw[int((11.75 - p_open) * SR): int((11.75 - p_open + OPEN + 0.1) * SR)].copy()
+ts = np.arange(len(seg)) / SR
+seg *= np.interp(ts, [0, p_open - 0.03, p_open, OPEN - 0.4, OPEN + 0.02], [0, 0, 1, 1, 0])[:, None]
+add(seg, 0, -4.5, buf=film)
+add(riser[-int(0.45 * SR):], p_open + 0.02 - 0.45, -11, buf=film)  # the riser's last breath into the press
+add(thock, p_open - 0.012, 0, buf=film)
+add(boom, p_open, -10, buf=film)
+last = -1
+for i in range(2, 200):
+    ft = open_t(fill[i])
+    if ft - last < 1 / 22 and i not in flags:
+        continue
+    last = ft
+    u = (i - 2) / 198
+    add(pitch(tick, 1.0 + 0.45 * u), ft, -18 + 3 * u, pan=0.25 * np.sin(i * 1.7), buf=film)
+for i in flags:
+    add(pitch(chime, 0.79), open_t(fill[i] + 0.28), -15, buf=film)
+add(succ, open_t(T['done']), -6, buf=film)
+
+# the story after the open
+o = int(round(SHIFT * SR))
+film[o: o + len(mix)] += mix
+film = film[:NF]
+peak = np.abs(film).max()
+sf.write(f'{D}/mix.wav', (film / max(1.0, peak / 0.95)).astype(np.float32), SR, subtype='FLOAT')
+print(f'mix peak {20 * np.log10(peak):.1f} dBFS, {len(film) / SR:.2f} s, press in the open at {p_open:.3f} s')

@@ -2,13 +2,16 @@
 
 Idea from the idea bank (`ideas/tab-to-finish.md`): do any repetitive computer task twice, press Tab, and it does the rest and checks every row.
 
-- `tab-to-finish-9x16.mp4`: the main cut, vertical 1080x1920, 27 s, 60 fps, with sound. Captions, the Tab key and the end card's last line sit above the bottom of the frame that X's player covers.
+- `tab-to-finish-9x16.mp4`: the main cut, vertical 1080x1920, 30.5 s, 60 fps, with sound. Captions, the Tab key and the end card's last line sit above the bottom of the frame that X's player covers.
 - `tab-to-finish-16x9.mp4`: the same film laid out for landscape, 1920x1080.
 - `src-film/`: Remotion source and the audio pipeline.
 
 ## The film
 
-Every shot is built in Remotion (no screen recording): a Mac desktop with a file browser holding 200 generated invoices and a spreadsheet. Frame 0 is the money shot (the "Tab to do the other 198" pill), then it rewinds to the setup: two rows copied by hand, the pill, the Tab key, 198 rows filling while each one gets checked (two flagged), the done pill, and the end card.
+Every shot is built in Remotion (no screen recording): a Mac desktop with a file browser holding 200 generated invoices and a spreadsheet.
+
+- 0 to 4.6 s, the cold open: the "Tab to do the other 198" pill and the Tab key on frame 0, the press, all 198 rows pouring in and getting checked, the done pill, "One key. 41 seconds." Scene time runs time-warped here (`openSt` in `timeline.ts`).
+- Then the story: two rows copied by hand, the pill, the Tab key, 198 rows filling while each one gets checked (two flagged), "3 hours → 41 seconds", and the end card. It runs on the scene timeline `T`, shifted by `SHIFT` in film time.
 
 ## Rebuild
 
