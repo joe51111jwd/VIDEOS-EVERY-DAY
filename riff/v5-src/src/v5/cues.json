@@ -1,0 +1,128 @@
+[
+ {
+  "id": "site",
+  "who": "Maya",
+  "text": "Make me a website for my coffee shop.",
+  "a": 0.25,
+  "b": 2.193
+ },
+ {
+  "id": "warm",
+  "who": "Maya",
+  "text": "Warmer.",
+  "a": 2.443,
+  "b": 2.998
+ },
+ {
+  "id": "big",
+  "who": "Maya",
+  "text": "Bigger headline.",
+  "a": 3.198,
+  "b": 4.054
+ },
+ {
+  "id": "menu",
+  "who": "Maya",
+  "text": "Now add the menu.",
+  "a": 4.254,
+  "b": 5.241
+ },
+ {
+  "id": "app?",
+  "who": "Riff",
+  "text": "Done. Want an app to go with it?",
+  "a": 5.541,
+  "b": 7.24
+ },
+ {
+  "id": "yes",
+  "who": "Maya",
+  "text": "Yes! Same look as the site.",
+  "a": 9.24,
+  "b": 10.808
+ },
+ {
+  "id": "onit",
+  "who": "Riff",
+  "text": "On it.",
+  "a": 11.058,
+  "b": 11.539
+ },
+ {
+  "id": "usual",
+  "who": "Maya",
+  "text": "Can it remember my usual order?",
+  "a": 13.0,
+  "b": 14.734
+ },
+ {
+  "id": "sure",
+  "who": "Riff",
+  "text": "Sure. One tap to reorder.",
+  "a": 14.984,
+  "b": 16.621
+ },
+ {
+  "id": "perfect",
+  "who": "Maya",
+  "text": "Oh, that's perfect.",
+  "a": 16.971,
+  "b": 18.078
+ },
+ {
+  "id": "poster",
+  "who": "Maya",
+  "text": "We open Friday. Can you make a poster?",
+  "a": 18.678,
+  "b": 20.891
+ },
+ {
+  "id": "boc",
+  "who": "Riff",
+  "text": "Bold, or classic?",
+  "a": 21.141,
+  "b": 22.176
+ },
+ {
+  "id": "bold",
+  "who": "Maya",
+  "text": "Bold.",
+  "a": 22.376,
+  "b": 22.954
+ },
+ {
+  "id": "cup",
+  "who": "Maya",
+  "text": "Put the cup on it.",
+  "a": 23.754,
+  "b": 24.691
+ },
+ {
+  "id": "story",
+  "who": "Riff",
+  "text": "Want a story for Instagram too?",
+  "a": 25.291,
+  "b": 26.982
+ },
+ {
+  "id": "yes2",
+  "who": "Maya",
+  "text": "Yes!",
+  "a": 27.182,
+  "b": 27.699
+ },
+ {
+  "id": "extras",
+  "who": "Riff",
+  "text": "I made you a few extras, too.",
+  "a": 28.599,
+  "b": 30.102
+ },
+ {
+  "id": "love",
+  "who": "Maya",
+  "text": "Okay. I love it.",
+  "a": 31.4,
+  "b": 32.589
+ }
+]

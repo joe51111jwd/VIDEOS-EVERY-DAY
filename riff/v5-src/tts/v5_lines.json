@@ -1,0 +1,20 @@
+[
+ {"id": "site",    "who": "Maya", "text": "Make me a website for my coffee shop.", "at": 0.15},
+ {"id": "warm",    "who": "Maya", "text": "Warmer.", "at": 2.4, "gap": 0.25},
+ {"id": "big",     "who": "Maya", "text": "Bigger headline.", "at": 3.1, "gap": 0.2},
+ {"id": "menu",    "who": "Maya", "text": "Now add the menu.", "at": 3.95, "gap": 0.2},
+ {"id": "app?",    "who": "Riff", "text": "Done. Want an app to go with it?", "at": 5.0, "gap": 0.3},
+ {"id": "yes",     "who": "Maya", "text": "Yes! Same look as the site.", "at": 8.7, "gap": 2.0},
+ {"id": "onit",    "who": "Riff", "text": "On it.", "at": 10.5, "gap": 0.25},
+ {"id": "usual",   "who": "Maya", "text": "Can it remember my usual order?", "at": 13.0, "gap": 0.5},
+ {"id": "sure",    "who": "Riff", "text": "Sure. One tap to reorder.", "at": 14.9, "gap": 0.25},
+ {"id": "perfect", "who": "Maya", "text": "Oh, that's perfect.", "at": 16.7, "gap": 0.35},
+ {"id": "poster",  "who": "Maya", "text": "We open Friday. Can you make a poster?", "at": 18.3, "gap": 0.6},
+ {"id": "boc",     "who": "Riff", "text": "Bold, or classic?", "at": 20.5, "gap": 0.25},
+ {"id": "bold",    "who": "Maya", "text": "Bold.", "at": 21.5, "gap": 0.2},
+ {"id": "cup",     "who": "Maya", "text": "Put the cup on it.", "at": 23.5, "gap": 0.8},
+ {"id": "story",   "who": "Riff", "text": "Want a story for Instagram too?", "at": 25.0, "gap": 0.6},
+ {"id": "yes2",    "who": "Maya", "text": "Yes!", "at": 26.7, "gap": 0.2},
+ {"id": "extras",  "who": "Riff", "text": "I made you a few extras, too.", "at": 28.4, "gap": 0.9},
+ {"id": "love",    "who": "Maya", "text": "Okay. I love it.", "at": 31.4, "gap": 0.9}
+]

@@ -1,0 +1,960 @@
+{
+ "text": "Make me a website for my coffee shop. Warmer, bigger headline. Now add the menu. Done. Want an app to go with it? Yes, same look as the site. On it. Can it remember my usual order? Sure, one tap to reorder. Oh, that's perfect. We open Friday. Can you make a poster? Bold or classic? Bold. Put the cup on it. Want a story for Instagram too? Yes. I made you a few extras too. Okay. I love it",
+ "model": "scribe_v2",
+ "words": [
+  {
+   "text": "Make",
+   "start": 0.1,
+   "end": 0.3,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 0.3,
+   "end": 0.34,
+   "type": "spacing"
+  },
+  {
+   "text": "me",
+   "start": 0.34,
+   "end": 0.42,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 0.42,
+   "end": 0.48,
+   "type": "spacing"
+  },
+  {
+   "text": "a",
+   "start": 0.48,
+   "end": 0.52,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 0.52,
+   "end": 0.56,
+   "type": "spacing"
+  },
+  {
+   "text": "website",
+   "start": 0.56,
+   "end": 1.02,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 1.02,
+   "end": 1.06,
+   "type": "spacing"
+  },
+  {
+   "text": "for",
+   "start": 1.06,
+   "end": 1.16,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 1.16,
+   "end": 1.2,
+   "type": "spacing"
+  },
+  {
+   "text": "my",
+   "start": 1.2,
+   "end": 1.32,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 1.32,
+   "end": 1.38,
+   "type": "spacing"
+  },
+  {
+   "text": "coffee",
+   "start": 1.38,
+   "end": 1.66,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 1.66,
+   "end": 1.74,
+   "type": "spacing"
+  },
+  {
+   "text": "shop.",
+   "start": 1.74,
+   "end": 2.04,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 2.04,
+   "end": 2.04,
+   "type": "spacing"
+  },
+  {
+   "text": "Warmer,",
+   "start": 3.2,
+   "end": 3.62,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 3.62,
+   "end": 3.62,
+   "type": "spacing"
+  },
+  {
+   "text": "bigger",
+   "start": 4.16,
+   "end": 4.44,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 4.44,
+   "end": 4.48,
+   "type": "spacing"
+  },
+  {
+   "text": "headline.",
+   "start": 4.48,
+   "end": 4.96,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 4.96,
+   "end": 4.96,
+   "type": "spacing"
+  },
+  {
+   "text": "Now",
+   "start": 5.62,
+   "end": 6.08,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 6.08,
+   "end": 6.14,
+   "type": "spacing"
+  },
+  {
+   "text": "add",
+   "start": 6.14,
+   "end": 6.26,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 6.26,
+   "end": 6.3,
+   "type": "spacing"
+  },
+  {
+   "text": "the",
+   "start": 6.3,
+   "end": 6.36,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 6.36,
+   "end": 6.4,
+   "type": "spacing"
+  },
+  {
+   "text": "menu.",
+   "start": 6.4,
+   "end": 6.76,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 6.76,
+   "end": 6.76,
+   "type": "spacing"
+  },
+  {
+   "text": "Done.",
+   "start": 7.54,
+   "end": 7.88,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 7.88,
+   "end": 8.3,
+   "type": "spacing"
+  },
+  {
+   "text": "Want",
+   "start": 8.3,
+   "end": 8.38,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 8.38,
+   "end": 8.42,
+   "type": "spacing"
+  },
+  {
+   "text": "an",
+   "start": 8.42,
+   "end": 8.48,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 8.48,
+   "end": 8.54,
+   "type": "spacing"
+  },
+  {
+   "text": "app",
+   "start": 8.54,
+   "end": 8.66,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 8.66,
+   "end": 8.7,
+   "type": "spacing"
+  },
+  {
+   "text": "to",
+   "start": 8.7,
+   "end": 8.76,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 8.76,
+   "end": 8.8,
+   "type": "spacing"
+  },
+  {
+   "text": "go",
+   "start": 8.8,
+   "end": 8.92,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 8.92,
+   "end": 8.94,
+   "type": "spacing"
+  },
+  {
+   "text": "with",
+   "start": 8.94,
+   "end": 9.06,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 9.06,
+   "end": 9.12,
+   "type": "spacing"
+  },
+  {
+   "text": "it?",
+   "start": 9.12,
+   "end": 9.22,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 9.22,
+   "end": 9.22,
+   "type": "spacing"
+  },
+  {
+   "text": "Yes,",
+   "start": 9.8,
+   "end": 10.08,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 10.08,
+   "end": 10.46,
+   "type": "spacing"
+  },
+  {
+   "text": "same",
+   "start": 10.46,
+   "end": 10.7,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 10.7,
+   "end": 10.76,
+   "type": "spacing"
+  },
+  {
+   "text": "look",
+   "start": 10.76,
+   "end": 10.96,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 10.96,
+   "end": 11.04,
+   "type": "spacing"
+  },
+  {
+   "text": "as",
+   "start": 11.04,
+   "end": 11.14,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 11.14,
+   "end": 11.18,
+   "type": "spacing"
+  },
+  {
+   "text": "the",
+   "start": 11.18,
+   "end": 11.28,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 11.28,
+   "end": 11.32,
+   "type": "spacing"
+  },
+  {
+   "text": "site.",
+   "start": 11.32,
+   "end": 11.62,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 11.62,
+   "end": 11.62,
+   "type": "spacing"
+  },
+  {
+   "text": "On",
+   "start": 12.48,
+   "end": 12.58,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 12.58,
+   "end": 12.62,
+   "type": "spacing"
+  },
+  {
+   "text": "it.",
+   "start": 12.62,
+   "end": 12.74,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 12.74,
+   "end": 12.74,
+   "type": "spacing"
+  },
+  {
+   "text": "Can",
+   "start": 13.5,
+   "end": 13.6,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 13.6,
+   "end": 13.64,
+   "type": "spacing"
+  },
+  {
+   "text": "it",
+   "start": 13.64,
+   "end": 13.74,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 13.74,
+   "end": 13.78,
+   "type": "spacing"
+  },
+  {
+   "text": "remember",
+   "start": 13.78,
+   "end": 14.22,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 14.22,
+   "end": 14.26,
+   "type": "spacing"
+  },
+  {
+   "text": "my",
+   "start": 14.26,
+   "end": 14.4,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 14.4,
+   "end": 14.48,
+   "type": "spacing"
+  },
+  {
+   "text": "usual",
+   "start": 14.48,
+   "end": 14.78,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 14.78,
+   "end": 14.9,
+   "type": "spacing"
+  },
+  {
+   "text": "order?",
+   "start": 14.9,
+   "end": 15.14,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 15.14,
+   "end": 15.14,
+   "type": "spacing"
+  },
+  {
+   "text": "Sure,",
+   "start": 15.94,
+   "end": 16.18,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 16.18,
+   "end": 16.56,
+   "type": "spacing"
+  },
+  {
+   "text": "one",
+   "start": 16.56,
+   "end": 16.72,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 16.72,
+   "end": 16.78,
+   "type": "spacing"
+  },
+  {
+   "text": "tap",
+   "start": 16.78,
+   "end": 16.96,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 16.96,
+   "end": 17.0,
+   "type": "spacing"
+  },
+  {
+   "text": "to",
+   "start": 17.0,
+   "end": 17.08,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 17.08,
+   "end": 17.1,
+   "type": "spacing"
+  },
+  {
+   "text": "reorder.",
+   "start": 17.1,
+   "end": 17.48,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 17.48,
+   "end": 17.5,
+   "type": "spacing"
+  },
+  {
+   "text": "Oh,",
+   "start": 18.18,
+   "end": 18.32,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 18.32,
+   "end": 18.42,
+   "type": "spacing"
+  },
+  {
+   "text": "that's",
+   "start": 18.42,
+   "end": 18.64,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 18.64,
+   "end": 18.7,
+   "type": "spacing"
+  },
+  {
+   "text": "perfect.",
+   "start": 18.7,
+   "end": 19.16,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 19.16,
+   "end": 19.6,
+   "type": "spacing"
+  },
+  {
+   "text": "We",
+   "start": 19.6,
+   "end": 19.68,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 19.68,
+   "end": 19.74,
+   "type": "spacing"
+  },
+  {
+   "text": "open",
+   "start": 19.74,
+   "end": 19.92,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 19.92,
+   "end": 20.02,
+   "type": "spacing"
+  },
+  {
+   "text": "Friday.",
+   "start": 20.02,
+   "end": 20.42,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 20.42,
+   "end": 20.76,
+   "type": "spacing"
+  },
+  {
+   "text": "Can",
+   "start": 20.76,
+   "end": 20.88,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 20.88,
+   "end": 20.92,
+   "type": "spacing"
+  },
+  {
+   "text": "you",
+   "start": 20.92,
+   "end": 20.98,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 20.98,
+   "end": 21.02,
+   "type": "spacing"
+  },
+  {
+   "text": "make",
+   "start": 21.02,
+   "end": 21.14,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 21.14,
+   "end": 21.2,
+   "type": "spacing"
+  },
+  {
+   "text": "a",
+   "start": 21.2,
+   "end": 21.24,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 21.24,
+   "end": 21.28,
+   "type": "spacing"
+  },
+  {
+   "text": "poster?",
+   "start": 21.28,
+   "end": 21.66,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 21.66,
+   "end": 21.66,
+   "type": "spacing"
+  },
+  {
+   "text": "Bold",
+   "start": 22.32,
+   "end": 22.66,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 22.66,
+   "end": 22.66,
+   "type": "spacing"
+  },
+  {
+   "text": "or",
+   "start": 23.18,
+   "end": 23.24,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 23.24,
+   "end": 23.32,
+   "type": "spacing"
+  },
+  {
+   "text": "classic?",
+   "start": 23.32,
+   "end": 23.74,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 23.74,
+   "end": 23.74,
+   "type": "spacing"
+  },
+  {
+   "text": "Bold.",
+   "start": 24.44,
+   "end": 24.74,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 24.74,
+   "end": 25.12,
+   "type": "spacing"
+  },
+  {
+   "text": "Put",
+   "start": 25.12,
+   "end": 25.22,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 25.22,
+   "end": 25.24,
+   "type": "spacing"
+  },
+  {
+   "text": "the",
+   "start": 25.24,
+   "end": 25.32,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 25.32,
+   "end": 25.36,
+   "type": "spacing"
+  },
+  {
+   "text": "cup",
+   "start": 25.36,
+   "end": 25.54,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 25.54,
+   "end": 25.6,
+   "type": "spacing"
+  },
+  {
+   "text": "on",
+   "start": 25.6,
+   "end": 25.7,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 25.7,
+   "end": 25.74,
+   "type": "spacing"
+  },
+  {
+   "text": "it.",
+   "start": 25.74,
+   "end": 25.82,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 25.82,
+   "end": 25.88,
+   "type": "spacing"
+  },
+  {
+   "text": "Want",
+   "start": 26.54,
+   "end": 26.62,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 26.62,
+   "end": 26.66,
+   "type": "spacing"
+  },
+  {
+   "text": "a",
+   "start": 26.66,
+   "end": 26.72,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 26.72,
+   "end": 26.78,
+   "type": "spacing"
+  },
+  {
+   "text": "story",
+   "start": 26.78,
+   "end": 27.02,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 27.02,
+   "end": 27.04,
+   "type": "spacing"
+  },
+  {
+   "text": "for",
+   "start": 27.04,
+   "end": 27.1,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 27.1,
+   "end": 27.14,
+   "type": "spacing"
+  },
+  {
+   "text": "Instagram",
+   "start": 27.14,
+   "end": 27.6,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 27.6,
+   "end": 27.7,
+   "type": "spacing"
+  },
+  {
+   "text": "too?",
+   "start": 27.7,
+   "end": 27.88,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 27.88,
+   "end": 27.88,
+   "type": "spacing"
+  },
+  {
+   "text": "Yes.",
+   "start": 28.68,
+   "end": 29.08,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 29.08,
+   "end": 29.08,
+   "type": "spacing"
+  },
+  {
+   "text": "I",
+   "start": 29.84,
+   "end": 29.86,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 29.86,
+   "end": 29.9,
+   "type": "spacing"
+  },
+  {
+   "text": "made",
+   "start": 29.9,
+   "end": 30.04,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 30.04,
+   "end": 30.06,
+   "type": "spacing"
+  },
+  {
+   "text": "you",
+   "start": 30.06,
+   "end": 30.1,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 30.1,
+   "end": 30.14,
+   "type": "spacing"
+  },
+  {
+   "text": "a",
+   "start": 30.14,
+   "end": 30.18,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 30.18,
+   "end": 30.22,
+   "type": "spacing"
+  },
+  {
+   "text": "few",
+   "start": 30.22,
+   "end": 30.34,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 30.34,
+   "end": 30.38,
+   "type": "spacing"
+  },
+  {
+   "text": "extras",
+   "start": 30.38,
+   "end": 30.74,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 30.74,
+   "end": 30.84,
+   "type": "spacing"
+  },
+  {
+   "text": "too.",
+   "start": 30.84,
+   "end": 31.0,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 31.0,
+   "end": 31.0,
+   "type": "spacing"
+  },
+  {
+   "text": "Okay.",
+   "start": 31.52,
+   "end": 31.9,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 31.9,
+   "end": 31.9,
+   "type": "spacing"
+  },
+  {
+   "text": "I",
+   "start": 32.619,
+   "end": 32.68,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 32.68,
+   "end": 32.759,
+   "type": "spacing"
+  },
+  {
+   "text": "love",
+   "start": 32.759,
+   "end": 32.92,
+   "type": "word"
+  },
+  {
+   "text": " ",
+   "start": 32.92,
+   "end": 32.96,
+   "type": "spacing"
+  },
+  {
+   "text": "it",
+   "start": 32.96,
+   "end": 33.14,
+   "type": "word"
+  }
+ ]
+}

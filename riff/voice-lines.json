@@ -1,0 +1,117 @@
+{
+  "what": "ElevenLabs audio for the Riff v5 hype video (Riff hype video thread). A person (Maya) designs a coffee shop brand by talking to Riff, a Mac design app that talks back.",
+  "api_key": "Read ELEVENLABS_API_KEY from the generating session's environment. Never write the key into any file, log, script in /mnt/project-files, memory or message.",
+  "output_root": "/mnt/project-files/riff/",
+  "output_format": "mp3_44100_192 (if the plan refuses it, use mp3_44100_128)",
+
+  "voices": {
+    "Maya": {
+      "character": "Late 20s coffee shop owner. Natural, warm, casual, a little excited. Talking to her computer, not performing.",
+      "primary": {"name": "Jessica", "voice_id": "cgSgspJ2msm6clMCkdW9"},
+      "alternate": {"name": "Sarah", "voice_id": "EXAVITQu4vr4xnSDxMaL"}
+    },
+    "Riff": {
+      "character": "The AI design partner. Calm, warm, confident, a touch playful. Sounds like a real friendly person, never robotic or announcer-like.",
+      "primary": {"name": "Chris", "voice_id": "iP95p4xoKVk53GoZ742B"},
+      "alternate": {"name": "Eric", "voice_id": "cjVigY5qzO86Huf0OWal"}
+    },
+    "note": "If a voice_id is not available on the account, pick the closest premade voice from GET /v1/voices and record which one in the manifest."
+  },
+
+  "lines": [
+    {"id": "site",    "speaker": "Maya", "text": "Make me a website for my coffee shop.",   "v3_text": "Make me a website for my coffee shop."},
+    {"id": "warm",    "speaker": "Maya", "text": "Warmer.",                                 "v3_text": "[thoughtful] Warmer."},
+    {"id": "big",     "speaker": "Maya", "text": "Bigger headline.",                        "v3_text": "Bigger headline."},
+    {"id": "menu",    "speaker": "Maya", "text": "Now add the menu.",                       "v3_text": "Now add the menu."},
+    {"id": "app_q",   "speaker": "Riff", "text": "Done. Want an app to go with it?",        "v3_text": "[warmly] Done. Want an app to go with it?"},
+    {"id": "yes",     "speaker": "Maya", "text": "Yes! Same look as the site.",             "v3_text": "[excited] Yes! Same look as the site."},
+    {"id": "onit",    "speaker": "Riff", "text": "On it.",                                  "v3_text": "[confident] On it."},
+    {"id": "usual",   "speaker": "Maya", "text": "Can it remember my usual order?",         "v3_text": "[curious] Can it remember my usual order?"},
+    {"id": "sure",    "speaker": "Riff", "text": "Sure. One tap to reorder.",               "v3_text": "[warmly] Sure. One tap to reorder."},
+    {"id": "perfect", "speaker": "Maya", "text": "Oh, that's perfect.",                     "v3_text": "[delighted] Oh, that's perfect."},
+    {"id": "poster",  "speaker": "Maya", "text": "We open Friday. Can you make a poster?",  "v3_text": "We open Friday. Can you make a poster?"},
+    {"id": "boc",     "speaker": "Riff", "text": "Bold, or classic?",                       "v3_text": "[playful] Bold, or classic?"},
+    {"id": "bold",    "speaker": "Maya", "text": "Bold.",                                   "v3_text": "[decisive] Bold."},
+    {"id": "cup",     "speaker": "Maya", "text": "Put the cup on it.",                      "v3_text": "Put the cup on it."},
+    {"id": "story",   "speaker": "Riff", "text": "Want a story for Instagram too?",         "v3_text": "[curious] Want a story for Instagram too?"},
+    {"id": "yes2",    "speaker": "Maya", "text": "Yes!",                                    "v3_text": "[excited] Yes!"},
+    {"id": "extras",  "speaker": "Riff", "text": "I made you a few extras, too.",           "v3_text": "[proud] I made you a few extras, too."},
+    {"id": "love",    "speaker": "Maya", "text": "Okay. I love it.",                        "v3_text": "[laughs softly] Okay. [happy] I love it."}
+  ],
+
+  "jobs": [
+    {
+      "name": "dialogue_v3",
+      "priority": 1,
+      "why": "One continuous conversation sounds most natural (real turn-taking, consistent voices). The video thread splits it into lines itself.",
+      "endpoint": "POST https://api.elevenlabs.io/v1/text-to-dialogue/with-timestamps (if unavailable, POST /v1/text-to-dialogue)",
+      "body": "inputs = all 18 lines in order as {text: v3_text, voice_id: primary voice of the speaker}; model_id = eleven_v3; settings.stability = 0.5",
+      "takes": "3 takes with seed 11, 22 and 33",
+      "output": "voices/dialogue_v3_take1.mp3 (take2, take3) plus voices/dialogue_v3_take1.json etc. holding the returned alignment / voice_segments with the audio_base64 field removed"
+    },
+    {
+      "name": "lines_v2_primary",
+      "priority": 1,
+      "why": "Reliable per-line fallback.",
+      "endpoint": "POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}?output_format=...",
+      "body": "text = line.text (no brackets); model_id = eleven_multilingual_v2; voice_settings = {stability: 0.4, similarity_boost: 0.8, style: 0.3, use_speaker_boost: true}; previous_text / next_text = the neighbouring lines' text so the delivery flows like one conversation; seed = 7",
+      "output": "voices/v2_primary/{id}.mp3"
+    },
+    {
+      "name": "lines_v2_alternate",
+      "priority": 2,
+      "same_as": "lines_v2_primary but with the alternate voice of each speaker",
+      "output": "voices/v2_alt/{id}.mp3"
+    },
+    {
+      "name": "music",
+      "priority": 2,
+      "endpoint": "POST https://api.elevenlabs.io/v1/music (check the API reference if a parameter is rejected)",
+      "takes": [
+        {
+          "file": "music/riff_music_a.mp3",
+          "body": {
+            "model_id": "music_v1",
+            "music_length_ms": 40000,
+            "force_instrumental": true,
+            "prompt": "Instrumental only. A premium, minimal Apple-commercial style track. Warm felt piano plays a simple hopeful four-note motif over a soft pulsing synth and light finger snaps, around 112 BPM, major key. Starts intimate and sparse, then gradually adds a gentle kick, deep round bass, airy pads and bright plucks, building confidence and wonder. Clean, modern, spacious mix with tasteful restraint. Peaks around 30 seconds, then resolves to a soft final piano chord that rings out by 40 seconds. No vocals, no harsh synths, no EDM drop."
+          }
+        },
+        {
+          "file": "music/riff_music_b.mp3",
+          "body_note": "Same style, but as a composition_plan if the API accepts one, so the sections line up with the edit:",
+          "positive_global_styles": ["premium minimal Apple commercial", "warm felt piano motif", "soft pulsing synth", "light finger snaps", "112 BPM", "major key", "clean spacious modern mix", "instrumental"],
+          "negative_global_styles": ["vocals", "EDM drop", "harsh synths", "dubstep", "cheesy stock music"],
+          "sections": [
+            {"section_name": "Intro", "duration_ms": 5500, "positive_local_styles": ["sparse", "curious", "felt piano motif with soft pulse"]},
+            {"section_name": "Lift", "duration_ms": 3500, "positive_local_styles": ["rising airy swell", "anticipation", "ends on a short breath"]},
+            {"section_name": "Title hit", "duration_ms": 2000, "positive_local_styles": ["one soft wide impact chord", "airy", "spacious"]},
+            {"section_name": "Groove", "duration_ms": 7000, "positive_local_styles": ["gentle kick and snaps enter", "round bass", "optimistic"]},
+            {"section_name": "Build", "duration_ms": 10000, "positive_local_styles": ["fuller", "bolder", "bright plucks and pads", "confident"]},
+            {"section_name": "Peak", "duration_ms": 5000, "positive_local_styles": ["everything together", "wide and bright", "wonder"]},
+            {"section_name": "Outro", "duration_ms": 7000, "positive_local_styles": ["drums drop out", "warm piano resolves", "final chord rings out"]}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sfx",
+      "priority": 3,
+      "endpoint": "POST https://api.elevenlabs.io/v1/sound-generation",
+      "body": "text, duration_seconds, prompt_influence = 0.6; 2 variations each",
+      "output": "sfx/{name}_1.mp3 and sfx/{name}_2.mp3",
+      "sounds": [
+        {"name": "whoosh_soft", "duration_seconds": 1.0, "text": "Soft airy whoosh, subtle and clean, like a camera gliding past, premium tech commercial"},
+        {"name": "tap_glass", "duration_seconds": 0.5, "text": "Tiny soft glassy UI tap, clean high-end interface sound, very short"},
+        {"name": "pop_soft", "duration_seconds": 0.5, "text": "Soft rounded pop as a card snaps into place, gentle and satisfying, Apple-style UI sound"},
+        {"name": "shimmer", "duration_seconds": 1.5, "text": "Brief warm shimmering chime, magical reveal, airy sparkle, premium"},
+        {"name": "boom_logo", "duration_seconds": 3.0, "text": "Deep soft cinematic boom with a long airy tail for a logo reveal, subtle, not aggressive"},
+        {"name": "riser", "duration_seconds": 2.0, "text": "Gentle airy rising swell building over two seconds into a reveal, soft, no harsh noise"},
+        {"name": "paper", "duration_seconds": 0.8, "text": "Soft paper sheet sliding and settling onto a table, close up, clean"},
+        {"name": "cup_down", "duration_seconds": 0.8, "text": "Ceramic coffee cup set down softly on a stone table, close up, clean"}
+      ]
+    }
+  ],
+
+  "report": "Write voices/manifest.json listing every file written (job, path, voice used, duration) and every failure with its HTTP status and message. Do the priority 1 jobs first. Then tell the Riff hype video thread they are ready."
+}

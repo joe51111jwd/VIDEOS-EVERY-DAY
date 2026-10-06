@@ -1,0 +1,383 @@
+{
+ "generated_at": "2026-10-06T01:25:57Z",
+ "api_host": "https://api.us.elevenlabs.io",
+ "output_format": "mp3_44100_192",
+ "voices": {
+  "Maya": {
+   "character": "Late 20s coffee shop owner. Natural, warm, casual, a little excited. Talking to her computer, not performing.",
+   "primary": {
+    "name": "Jessica",
+    "voice_id": "cgSgspJ2msm6clMCkdW9"
+   },
+   "alternate": {
+    "name": "Sarah",
+    "voice_id": "EXAVITQu4vr4xnSDxMaL"
+   }
+  },
+  "Riff": {
+   "character": "The AI design partner. Calm, warm, confident, a touch playful. Sounds like a real friendly person, never robotic or announcer-like.",
+   "primary": {
+    "name": "Chris",
+    "voice_id": "iP95p4xoKVk53GoZ742B"
+   },
+   "alternate": {
+    "name": "Eric",
+    "voice_id": "cjVigY5qzO86Huf0OWal"
+   }
+  }
+ },
+ "files": [
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/site.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 2.220408
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/warm.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 0.731429
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/big.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.436735
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/menu.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.619592
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/app_q.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 1.802449
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/yes.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 2.507755
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/onit.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 0.862041
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/usual.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 2.507755
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/sure.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 1.985306
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/perfect.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.201633
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/poster.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 2.821224
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/boc.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 1.201633
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/bold.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 0.365714
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/cup.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.253878
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/story.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 1.671837
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/yes2.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.097143
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/extras.mp3",
+   "voice": "Riff=Chris (iP95p4xoKVk53GoZ742B)",
+   "duration_s": 1.48898
+  },
+  {
+   "job": "lines_v2_primary",
+   "path": "voices/v2_primary/love.mp3",
+   "voice": "Maya=Jessica (cgSgspJ2msm6clMCkdW9)",
+   "duration_s": 1.671837
+  },
+  {
+   "job": "dialogue_v3",
+   "path": "voices/dialogue_v3_take1.mp3",
+   "voice": "Maya=Jessica, Riff=Chris",
+   "duration_s": 34.037551,
+   "seed": 11,
+   "alignment": "voices/dialogue_v3_take1.json"
+  },
+  {
+   "job": "dialogue_v3",
+   "path": "voices/dialogue_v3_take2.mp3",
+   "voice": "Maya=Jessica, Riff=Chris",
+   "duration_s": 32.835918,
+   "seed": 22,
+   "alignment": "voices/dialogue_v3_take2.json"
+  },
+  {
+   "job": "dialogue_v3",
+   "path": "voices/dialogue_v3_take3.mp3",
+   "voice": "Maya=Jessica, Riff=Chris",
+   "duration_s": 33.227755,
+   "seed": 33,
+   "alignment": "voices/dialogue_v3_take3.json"
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/site.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 2.089796
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/warm.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 0.731429
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/big.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.253878
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/menu.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.201633
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/app_q.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 2.403265
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/yes.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 2.115918
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/onit.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 0.679184
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/usual.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.933061
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/sure.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 2.533878
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/perfect.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.253878
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/poster.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 2.638367
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/boc.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 1.253878
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/bold.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 0.365714
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/cup.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.201633
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/story.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 1.854694
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/yes2.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 0.731429
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/extras.mp3",
+   "voice": "Riff=Eric (cjVigY5qzO86Huf0OWal)",
+   "duration_s": 1.697959
+  },
+  {
+   "job": "lines_v2_alternate",
+   "path": "voices/v2_alt/love.mp3",
+   "voice": "Maya=Sarah (EXAVITQu4vr4xnSDxMaL)",
+   "duration_s": 1.201633
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/whoosh_soft_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 1.044898
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/whoosh_soft_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 1.044898
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/tap_glass_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.522449
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/tap_glass_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.522449
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/pop_soft_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.522449
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/pop_soft_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.522449
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/shimmer_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 1.515102
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/shimmer_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 1.515102
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/boom_logo_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 3.030204
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/boom_logo_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 3.030204
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/riser_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 2.037551
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/riser_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 2.037551
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/paper_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.835918
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/paper_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.835918
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/cup_down_1.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.835918
+  },
+  {
+   "job": "sfx",
+   "path": "sfx/cup_down_2.mp3",
+   "voice": "sound-generation",
+   "duration_s": 0.835918
+  },
+  {
+   "job": "music",
+   "path": "music/riff_music_a.mp3",
+   "voice": "music_v1",
+   "duration_s": 39.967333,
+   "variant": "prompt"
+  },
+  {
+   "job": "music",
+   "path": "music/riff_music_b.mp3",
+   "voice": "music_v1",
+   "duration_s": 40.019583,
+   "variant": "composition_plan",
+   "note": "API requires sections >= 3000 ms: Title hit 2000->3000 ms, Groove 7000->6000 ms, so Title hit is 9-12 s and every later section boundary is unchanged."
+  }
+ ],
+ "failures": []
+}
