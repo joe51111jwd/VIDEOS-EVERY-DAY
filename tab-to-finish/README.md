@@ -3,6 +3,7 @@
 Idea from the idea bank (`ideas/tab-to-finish.md`): do any repetitive computer task twice, press Tab, and it does the rest and checks every row.
 
 - `tab-to-finish-9x16.mp4`: the main cut, vertical 1080x1920, 30.5 s, 60 fps, with sound. Captions, the Tab key and the end card's last line sit above the bottom of the frame that X's player covers.
+- `tab-to-finish-9x16-v1.mp4`: the first vertical cut (27 s), before the cold open showed the payoff.
 - `tab-to-finish-16x9.mp4`: the same film laid out for landscape, 1920x1080.
 - `src-film/`: Remotion source and the audio pipeline.
 
