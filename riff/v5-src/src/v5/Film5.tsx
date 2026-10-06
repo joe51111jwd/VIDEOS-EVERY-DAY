@@ -1,55 +1,28 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Freeze, interpolate, Sequence, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Freeze, getInputProps, interpolate, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {clamp01, easeInOut, FPS, fr, lerp, SANS, step} from './tokens';
 import {Website, SITE_H, SITE_W} from './designs/Website';
 import {HomeScreen, MenuScreen, OrderScreen, PHONE_H, PHONE_W} from './designs/AppScreens';
 import {BeanBag, BizCards, MenuBoard, Poster, POSTER_H, POSTER_W, Sticker, Story, STORY_H, STORY_W} from './designs/Print';
 import {CANVAS_CENTER, MenuBar, RiffIcon, RiffWindow, Wallpaper, WIN} from './mac/Mac';
 import {ICard, IGlobe, IList, IPhone, IPoster, ISticker, IStory, ITag} from './mac/icons';
-import cues from './cues.json';
 import envJson from './env5.json';
 import sfxList from './sfx.json';
+import {L, Line, LINES, META, SFX, T, V5_DURATION} from './timeline';
+export {V5_DURATION};
 
-// ------------------------------------------------------------------ voice cue sheet (start/end seconds per line)
-type Line = {id: string; who: 'Maya' | 'Riff'; text: string; a: number; b: number; words?: number[]};
-export const LINES = cues as Line[];
-const L = (id: string) => LINES.find((l) => l.id === id)!;
-export const V5_DURATION = 38.5;
-
-const env = envJson as {u: number[]; r: number[]};
+const env = envJson as {u: number[]; r: number[]; duck?: number[]};
 const lvl = (k: 'u' | 'r', frame: number) => {
 	const a = env[k];
 	if (!a || !a.length) return 0;
 	const i = Math.max(1, Math.min(a.length - 2, Math.round(frame)));
 	return (a[i - 1] + 2 * a[i] + a[i + 1]) / 4;
 };
-
-// ------------------------------------------------------------------ when things happen
-const T = {
-	site: {
-		image: -0.15, // already developing on frame 0, so the very first frame is a design being made
-		nav: 0.1,
-		eyebrow: 0.4,
-		head: 0.5,
-		body: 0.9,
-		ctas: 1.05,
-		card: 1.25,
-		pill: 1.4,
-		warm: L('warm').a + 0.3,
-		big: L('big').a + 0.4,
-		menu: L('menu').a + 0.45,
-	},
-	pullback: [L('app?').a + 0.25, L('app?').a + 1.65] as [number, number],
-	title: [L('app?').b + 0.15, L('yes').a - 0.25] as [number, number],
-	home: L('onit').a + 0.15,
-	menuS: L('onit').a + 0.55,
-	order: L('onit').a + 0.95,
-	usual: L('sure').a + 0.35,
-	poster: L('bold').a + 0.3,
-	cup: L('cup').a + 0.55,
-	story: L('yes2').a + 0.15,
-	extras: L('extras').a + 0.3,
-	end: L('love').b + 0.6,
+/** 1 while someone speaks (quick attack, slow release): the music dips under every line */
+const duck = (frame: number) => {
+	const a = env.duck;
+	if (!a || !a.length) return 0;
+	return a[Math.max(0, Math.min(a.length - 1, Math.round(frame)))];
 };
 
 // ------------------------------------------------------------------ canvas layout (canvas px). Final reveal is one dense board.
@@ -300,8 +273,7 @@ const RiffHUD: React.FC = () => {
 					width: w,
 					height: HUD.h,
 					borderRadius: HUD.h / 2,
-					background: 'linear-gradient(180deg, rgba(44,40,38,0.84) 0%, rgba(16,14,13,0.88) 100%)',
-					backdropFilter: 'blur(30px) saturate(160%)',
+					background: 'linear-gradient(180deg, rgba(44,40,38,0.9) 0%, rgba(16,14,13,0.93) 100%)',
 					boxShadow: '0 22px 60px rgba(0,0,0,0.34), 0 4px 14px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,255,255,0.16)',
 					opacity: vis,
 					transform: `translateY(${(1 - entering) * 18}px) scale(${0.94 + 0.06 * entering})`,
@@ -326,60 +298,21 @@ const RiffHUD: React.FC = () => {
 };
 
 // ------------------------------------------------------------------ sound design
-// ElevenLabs SFX land in public/v5/sfx/<name>_<1|2>.wav (listed in sfx.json); until then the older synthesized ones stand in.
 const HAVE = new Set(sfxList as string[]);
-const FALLBACK: Record<string, string | null> = {whoosh_soft: 'whoosh.wav', tap_glass: 'tick.wav', pop_soft: 'pop.wav', shimmer: 'chime.wav', boom_logo: null, riser: null, paper: 'tick.wav', cup_down: 'pop.wav'};
-type Sfx = {t: number; n: keyof typeof FALLBACK; v: number};
-const SFX: Sfx[] = [
-	{t: 0.0, n: 'shimmer', v: 0.25},
-	{t: T.site.nav, n: 'tap_glass', v: 0.35},
-	{t: T.site.head, n: 'tap_glass', v: 0.4},
-	{t: T.site.card, n: 'pop_soft', v: 0.3},
-	{t: T.site.warm, n: 'shimmer', v: 0.35},
-	{t: T.site.big, n: 'pop_soft', v: 0.4},
-	{t: T.site.menu, n: 'whoosh_soft', v: 0.35},
-	{t: T.pullback[0], n: 'whoosh_soft', v: 0.55},
-	{t: T.title[0] - 1.6, n: 'riser', v: 0.35},
-	{t: T.title[0], n: 'boom_logo', v: 0.6},
-	{t: T.home - 0.75, n: 'whoosh_soft', v: 0.5},
-	{t: T.home, n: 'pop_soft', v: 0.35},
-	{t: T.menuS, n: 'pop_soft', v: 0.32},
-	{t: T.order, n: 'pop_soft', v: 0.3},
-	{t: T.usual - 0.95, n: 'whoosh_soft', v: 0.45},
-	{t: T.usual + 0.16, n: 'pop_soft', v: 0.45},
-	{t: L('perfect').b + 0.1, n: 'whoosh_soft', v: 0.4},
-	{t: T.poster - 0.95, n: 'whoosh_soft', v: 0.5},
-	{t: T.poster, n: 'paper', v: 0.45},
-	{t: T.poster + 0.6, n: 'pop_soft', v: 0.4},
-	{t: T.cup - 0.6, n: 'whoosh_soft', v: 0.35},
-	{t: T.cup, n: 'cup_down', v: 0.7},
-	{t: T.story, n: 'paper', v: 0.4},
-	{t: T.extras - 0.2, n: 'whoosh_soft', v: 0.5},
-	{t: T.extras + 0.1, n: 'paper', v: 0.35},
-	{t: T.extras + 0.35, n: 'pop_soft', v: 0.3},
-	{t: T.extras + 0.6, n: 'paper', v: 0.3},
-	{t: T.extras + 0.85, n: 'pop_soft', v: 0.32},
-	{t: T.end + 0.45, n: 'boom_logo', v: 0.55},
-	{t: T.end + 1.5, n: 'shimmer', v: 0.3},
-];
-const SfxLayer: React.FC = () => {
-	const used: Record<string, number> = {};
-	return (
-		<>
-			{SFX.map((e, i) => {
-				used[e.n] = (used[e.n] ?? 0) + 1;
-				const pick = `${e.n}_${used[e.n] % 2 === 1 ? 1 : 2}`;
-				const src = HAVE.has(pick) ? `v5/sfx/${pick}.wav` : HAVE.has(`${e.n}_1`) ? `v5/sfx/${e.n}_1.wav` : FALLBACK[e.n];
-				if (!src) return null;
-				return (
-					<Sequence key={i} from={Math.max(0, fr(e.t))} durationInFrames={fr(3.5)}>
-						<Audio src={staticFile(src)} volume={HAVE.size ? e.v : e.v * 0.7} />
-					</Sequence>
-				);
-			})}
-		</>
-	);
-};
+const SfxLayer: React.FC = () => (
+	<>
+		{SFX.filter((e) => HAVE.has(e.f)).map((e, i) => (
+			<Sequence key={i} from={Math.max(0, fr(e.t))} durationInFrames={fr((META[e.f]?.dur ?? 3) + 0.1)}>
+				<Audio src={staticFile(`v5/sfx/${e.f}.wav`)} volume={e.v} />
+			</Sequence>
+		))}
+	</>
+);
+// music bed level, and how far it dips under the voices
+const MUSIC = 0.65;
+const DUCK = 0.69;
+// `--props '{"stem":"vo"}'` (or music / sfx) renders one stem alone, for level checks
+const STEM = (getInputProps() as {stem?: string}).stem;
 
 // ------------------------------------------------------------------ title + end cards
 const TitleCard: React.FC<{a: number; b: number}> = ({a, b}) => {
@@ -466,14 +399,18 @@ export const motion = (frame: number) => {
 	}
 	return mx;
 };
-/** film-camera motion blur, centred on the current frame (shutter as a fraction of a frame) */
+/**
+ * film-camera motion blur, centred on the current frame (shutter as a fraction of a frame).
+ * Running average with normal blending (layer k at opacity 1/k): still areas stay exact, unlike additive
+ * plus-lighter stacking, whose 8-bit rounding tinted the cream UI green on 12-sample frames.
+ */
 const MBlur: React.FC<{samples: number; shutter?: number; children: React.ReactNode}> = ({samples, shutter = 0.5, children}) => {
 	const f = useCurrentFrame();
 	if (samples <= 1) return <>{children}</>;
 	return (
-		<AbsoluteFill style={{isolation: 'isolate'}}>
+		<AbsoluteFill>
 			{new Array(samples).fill(0).map((_, i) => (
-				<AbsoluteFill key={i} style={{mixBlendMode: 'plus-lighter', filter: `opacity(${1 / samples})`}}>
+				<AbsoluteFill key={i} style={{opacity: 1 / (i + 1)}}>
 					<Freeze frame={f + (i / (samples - 1) - 0.5) * shutter}>{children}</Freeze>
 				</AbsoluteFill>
 			))}
@@ -486,7 +423,7 @@ export const RiffFilm5: React.FC = () => {
 	const t = frame / FPS;
 	const mv = motion(frame);
 	// blur only where the camera actually moves; a sample per ~5 px of travel within the open shutter
-	const samples = mv < 5 ? 1 : Math.min(12, Math.max(3, Math.round((mv * 0.5) / 4)));
+	const samples = mv < 5 ? 1 : Math.min(10, Math.max(3, Math.round((mv * 0.5) / 4)));
 	return (
 		<AbsoluteFill style={{background: '#000'}}>
 			<MBlur samples={samples}>
@@ -495,9 +432,9 @@ export const RiffFilm5: React.FC = () => {
 			<TitleCard a={T.title[0]} b={T.title[1]} />
 			<EndCard a={T.end} />
 			<RiffHUD />
-			<Audio src={staticFile('v5/vo.wav')} />
-			<Audio src={staticFile('v5/music.wav')} volume={(f) => 0.55 * (1 - 0.4 * Math.min(1, lvl('u', f) + lvl('r', f)))} />
-			<SfxLayer />
+			{!STEM || STEM === 'vo' ? <Audio src={staticFile('v5/vo.wav')} /> : null}
+			{!STEM || STEM === 'music' ? <Audio src={staticFile('v5/music.wav')} volume={(f) => MUSIC * (1 - DUCK * duck(f))} /> : null}
+			{!STEM || STEM === 'sfx' ? <SfxLayer /> : null}
 		</AbsoluteFill>
 	);
 };
@@ -521,6 +458,13 @@ const Scene: React.FC = () => {
 	const u = lvl('u', frame);
 	const r = lvl('r', frame);
 
+	// what part of the desktop is on screen: skip whatever the camera can't see
+	const vx0 = fc.x - 960 / fc.s;
+	const vx1 = fc.x + 960 / fc.s;
+	const vy0 = fc.y - 540 / fc.s;
+	const vy1 = fc.y + 540 / fc.s;
+	const inWindow = vx0 > WIN.x + 4 && vx1 < WIN.x + WIN.w - 4 && vy0 > WIN.y + 4 && vy1 < WIN.y + WIN.h - 4;
+	const show = {sidebar: vx0 < WIN.x + 280, toolbar: vy0 < WIN.y + 64};
 	return (
 		<AbsoluteFill>
 			<AbsoluteFill
@@ -529,9 +473,9 @@ const Scene: React.FC = () => {
 					transformOrigin: '0 0',
 				}}
 			>
-				<Wallpaper />
-				<MenuBar />
-				<RiffWindow items={items} active={active} zoom={cc.z} user={u} riff={r}>
+				{inWindow ? null : <Wallpaper />}
+				{inWindow || vy0 > 40 ? null : <MenuBar />}
+				<RiffWindow items={items} active={active} zoom={cc.z} user={u} riff={r} show={show}>
 					<div
 						style={{
 							position: 'absolute',

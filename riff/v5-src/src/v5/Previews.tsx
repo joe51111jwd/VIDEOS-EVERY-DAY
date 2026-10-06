@@ -8,7 +8,13 @@ export const SiteTest: React.FC = () => (
 	</AbsoluteFill>
 );
 
-import {MenuBar, RiffWindow, Wallpaper, CANVAS_CENTER} from './mac/Mac';
+import {MenuBar, RiffWindow, Wallpaper, WallpaperSVG, CANVAS_CENTER} from './mac/Mac';
+
+export const WallpaperStill: React.FC = () => (
+	<AbsoluteFill style={{transform: 'scale(1.5)', transformOrigin: '0 0'}}>
+		<WallpaperSVG />
+	</AbsoluteFill>
+);
 import {IGlobe, IPhone, IPoster, IStory} from './mac/icons';
 import {SANS} from './tokens';
 

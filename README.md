@@ -6,7 +6,7 @@ Each idea lives in its own top-level folder.
 ## Ideas
 
 - [`riff/`](riff/): Riff, the voice-driven Mac design app
-  - `riff-hype-video*.mp4`: cuts v1 to v5 (the v5 preview is the locked visual reference)
+  - `riff-hype-video*.mp4`: cuts v1 to v5; `riff-hype-video-v5.mp4` is the final cut with audio
   - `v5-src/`: Remotion and Blender source for v5 (see its README)
   - `voices/`, `music/`, `sfx/`: ElevenLabs dialogue takes, music and sound effects
   - `waitlist-site/`: source for https://riff-waitlist.vercel.app

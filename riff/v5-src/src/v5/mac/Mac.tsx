@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurrentFrame} from 'remotion';
+import {Img, staticFile, useCurrentFrame} from 'remotion';
 import {clamp01, FPS, SANS, step} from '../tokens';
 import {IBattery, IChevron, IControl, IPlay, ISearch, IShare, ISidebar, IWifi} from './icons';
 
@@ -72,7 +72,7 @@ export const RiffIcon: React.FC<{size: number; level?: number; glow?: number}> =
 };
 
 // ------------------------------------------------------------------ desktop
-export const Wallpaper: React.FC = () => (
+export const WallpaperSVG: React.FC = () => (
 	<svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{position: 'absolute', inset: 0}}>
 		<defs>
 			<linearGradient id="sky" x1="0" y1="0" x2="0.15" y2="1">
@@ -123,6 +123,11 @@ export const Wallpaper: React.FC = () => (
 	</svg>
 );
 
+/** pre-rendered WallpaperSVG (public/v5/wallpaper.jpg, baked at 1.5x for zoom headroom) */
+export const Wallpaper: React.FC = () => (
+	<Img src={staticFile('v5/wallpaper.jpg')} style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080}} />
+);
+
 export const MenuBar: React.FC<{dark?: boolean}> = () => {
 	const ts = {textShadow: '0 1px 3px rgba(60,20,30,0.35)'};
 	return (
@@ -169,8 +174,7 @@ export const CANVAS_CENTER = {x: (SIDEBAR.x * 2 + SIDEBAR.w + WIN.w) / 2, y: (TO
 export type SideItem = {label: string; icon: React.FC<{size?: number; color?: string}>; at?: number};
 
 const glass = (alpha = 0.66): React.CSSProperties => ({
-	background: `rgba(252,252,253,${alpha})`,
-	backdropFilter: 'blur(28px) saturate(170%)',
+	background: `rgba(250,250,251,${Math.min(0.97, alpha + 0.16)})`,
 	boxShadow: '0 1px 0 rgba(255,255,255,0.8) inset, 0 0 0 1px rgba(0,0,0,0.07), 0 6px 18px rgba(0,0,0,0.08)',
 });
 
@@ -381,14 +385,16 @@ export const VoiceBar: React.FC<{user: number; riff: number; label?: string}> = 
 };
 
 /** The Riff window frame. `children` is the infinite canvas content (already camera-transformed). */
-export const RiffWindow: React.FC<{children: React.ReactNode; items: SideItem[]; active: number; zoom: number; user: number; riff: number}> = ({
-	children,
-	items,
-	active,
-	zoom,
-	user,
-	riff,
-}) => (
+export const RiffWindow: React.FC<{
+	children: React.ReactNode;
+	items: SideItem[];
+	active: number;
+	zoom: number;
+	user: number;
+	riff: number;
+	/** skip painting window chrome the camera can't see (saves render time) */
+	show?: {sidebar: boolean; toolbar: boolean};
+}> = ({children, items, active, zoom, user, riff, show = {sidebar: true, toolbar: true}}) => (
 	<div
 		style={{
 			position: 'absolute',
@@ -412,8 +418,8 @@ export const RiffWindow: React.FC<{children: React.ReactNode; items: SideItem[];
 			}}
 		/>
 		<div style={{position: 'absolute', inset: 0}}>{children}</div>
-		<Toolbar zoom={zoom} user={user} riff={riff} />
-		<Sidebar items={items} active={active} />
+		{show.toolbar ? <Toolbar zoom={zoom} user={user} riff={riff} /> : null}
+		{show.sidebar ? <Sidebar items={items} active={active} /> : null}
 		<div style={{position: 'absolute', inset: 0, borderRadius: 26, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.5)', pointerEvents: 'none', zIndex: 30}} />
 	</div>
 );
