@@ -2156,5 +2156,19 @@
    "from": 73.4,
    "to": 87.1
   }
- ]
+ ],
+ "outro": {
+  "in": 103.46,
+  "stabs": [
+   103.47,
+   104.03,
+   104.605,
+   104.95,
+   105.42,
+   106.005,
+   106.36
+  ],
+  "noteEnd": 107.9,
+  "note": "the song's ending after the pause at 1:43: seven horn stabs (the trumpets), the last one over a held low note that releases at noteEnd"
+ }
 }

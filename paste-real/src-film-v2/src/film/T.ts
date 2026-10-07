@@ -3,7 +3,7 @@
 import {at, BEAT, CUES} from '../lib/beat';
 
 export const E = 0.012;
-const O = (CUES as unknown as {outro: {in: number; trumpets: number; high: number; fade: number; beats: number[]}}).outro;
+const O = (CUES as unknown as {outro: {in: number; stabs: number[]; noteEnd: number}}).outro;
 
 export const T = {
 	// ---------------- hook: ⌘C an ad in Safari, ⌘V into Figma, it's real
@@ -27,12 +27,10 @@ export const T = {
 	resizeSel: at(3, 3) - E,
 	resize: at(3, 4) - E,
 	scene2: at(4) - E,
-	// ---------------- outro
+	// ---------------- outro: the song's ending, cut to its trumpets
 	silence: 27.476,
 	outroIn: O.in,
-	trumpets: O.trumpets,
-	high: O.high,
-	fade: O.fade,
-	outroBeats: O.beats,
+	stabs: O.stabs, // the seven horn stabs
+	noteEnd: O.noteEnd, // the held low note under the last stab lets go
 	DUR: CUES.duration,
 };

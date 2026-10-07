@@ -74,12 +74,8 @@ add(F.slam, 'boom', -8);
 F.cards.forEach((c, i) => add(c - 0.02, 'card', -8 - (i % 2) * 2));
 add(F.grid, 'sweep', -6);
 add(F.lockup, 'land', -2);
-// ---------------- outro
-add(O.draw, 'sweep', -12);
-O.items.forEach((t) => add(t - 0.04, 'tick_glass', -12));
-add(O.trumpets - 2.04, 'riser', -16);
-add(O.trumpets, 'boom', -10);
-O.keys.forEach((t, i) => add(t, 'key', -10 - (i % 2)));
-add(O.high, 'land', -8);
+// ---------------- the finale: the rows ride in on the first two trumpet stabs; the song does the rest
+add(O.stabs[0] - 0.03, 'whoosh', -12);
+add(O.stabs[1] - 0.03, 'whoosh', -14);
 
 console.log(JSON.stringify({beat: BEAT, E, events: ev.sort((a, b) => a[0] - b[0])}));

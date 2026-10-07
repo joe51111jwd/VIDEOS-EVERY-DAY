@@ -1,176 +1,189 @@
 import React from 'react';
-import {AbsoluteFill, Img, staticFile} from 'remotion';
-import {C, CmdGlyph, Keycap, MARK, Wordmark} from '../brand/brand';
-import {BRAND, BRAND_MONO, clamp01, easeInOut, easeOut, lerp, spr, step, SYS} from '../lib/tokens';
+import {AbsoluteFill} from 'remotion';
+import {C, Mark, Wordmark} from '../brand/brand';
+import {BRAND, BRAND_MONO, clamp01, easeInOut, easeOut, lerp, textW} from '../lib/tokens';
+import {Hero, HERO_H} from './apps3';
 import {Proof} from './Finale';
-import {T} from './T';
-
-// The outro, over the song's ending. Dark: everything that was copied, one after another, inside the selection.
-// Trumpets: lights up on paper, the icon, the name, the line, the shortcut. Then early access, and the fade.
-
-import {O} from './timing';
+import {AD, LullAd} from './LullAd';
+import {E} from './T';
+import {F, O} from './timing';
 export {O};
 
-const TAGS = ['Design · 8 layers', 'Chart · 6 bars', 'Website · 23 layers', 'Slide · 5 layers', 'Poster · 5 layers', 'Table · 30 cells'];
-const SEL = {w: 760, h: 760, cy: 880, r: 34};
+// The finale, on the song's trumpets. The name holds on orange through the silence; then every horn stab is a
+// paste: rows of everything Paste Real made slam in from the edges and squeeze the orange into a band around the
+// name, the line lands, and the held low note rings out on a full frame.
 
-/** the orange selection that draws itself around the gallery */
-const Selection: React.FC<{t: number; draw: number; fill: number}> = ({t, draw, fill}) => {
-	const pad = 18;
-	const W = SEL.w + pad * 2,
-		H = SEL.h + pad * 2;
-	const per = 2 * (W + H);
-	const c = lerp(W + H, 0, easeInOut(clamp01(fill)));
-	return (
-		<svg width={W} height={H} style={{position: 'absolute', left: 540 - W / 2, top: SEL.cy - H / 2, overflow: 'visible'}}>
-			<defs>
-				<clipPath id="ofill">
-					<path d={`M ${c} 0 L ${W + H} 0 L ${W + H} ${W + H} L 0 ${W + H} L 0 ${c} Z`} />
-				</clipPath>
-			</defs>
-			<rect x={0} y={0} width={W} height={H} rx={SEL.r + pad} fill={C.signal} clipPath="url(#ofill)" />
-			<rect x={0} y={0} width={W} height={H} rx={SEL.r + pad} fill="none" stroke={C.signal} strokeWidth={5} strokeDasharray={`${per * draw} ${per}`} opacity={0.35} />
-			<rect x={0} y={0} width={W} height={H} rx={SEL.r + pad} fill="none" stroke={C.signal} strokeWidth={5} strokeDasharray="22 16" strokeDashoffset={-t * 60} opacity={clamp01((draw - 0.75) / 0.25)} />
-			{[
-				[0, 0],
-				[W, 0],
-				[0, H],
-				[W, H],
-			].map(([x, y], i) => {
-				const p = spr(t, O.draw + 0.5 + i * 0.06, 10, 0.55);
-				return <rect key={i} x={x - 11 * p} y={y - 11 * p} width={22 * p} height={22 * p} rx={5} fill="#fff" stroke={C.signal} strokeWidth={4} />;
-			})}
-		</svg>
-	);
+type Kind = 'ad' | 'ad0' | 'chart' | 'code' | 'slide' | 'poster' | 'sheet' | 'site';
+const TH = 300; // tile height
+const GAP = 24;
+const TILE: Record<Kind, {w: number; app: string}> = {
+	ad: {w: 240, app: 'Figma'},
+	ad0: {w: 240, app: 'Figma'},
+	chart: {w: 533, app: 'Keynote'},
+	code: {w: 400, app: 'VS Code'},
+	slide: {w: 533, app: 'Google Slides'},
+	poster: {w: 300, app: 'Canva'},
+	sheet: {w: 400, app: 'Sheets'},
+	site: {w: 523, app: 'localhost:3000'},
+};
+
+const TileBody: React.FC<{k: Kind}> = ({k}) => {
+	const w = TILE[k].w;
+	if (k === 'ad0') {
+		// the ad as it was before the edits
+		const s = TH / AD.h;
+		return (
+			<div style={{width: w, height: TH, overflow: 'hidden'}}>
+				<div style={{transform: `scale(${s})`, transformOrigin: '0 0'}}>
+					<LullAd />
+				</div>
+			</div>
+		);
+	}
+	if (k === 'site') {
+		// the hero, running on localhost
+		const s = TH / HERO_H;
+		return (
+			<div style={{width: w, height: TH, overflow: 'hidden', background: '#fff'}}>
+				<div style={{transform: `scale(${s})`, transformOrigin: '0 0'}}>
+					<Hero w={w / s} />
+				</div>
+			</div>
+		);
+	}
+	const i = {ad: 0, chart: 1, code: 2, slide: 3, poster: 4, sheet: 5}[k];
+	return <Proof i={i} w={w} h={TH} />;
+};
+
+const Tile: React.FC<{k: Kind; ring: number}> = ({k, ring}) => (
+	<div style={{position: 'relative', width: TILE[k].w, height: TH, flexShrink: 0}}>
+		<div style={{position: 'absolute', inset: 0, borderRadius: 18, overflow: 'hidden', background: '#fff', boxShadow: '0 22px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.07)'}}>
+			<TileBody k={k} />
+			<div style={{position: 'absolute', left: 12, bottom: 12, height: 32, padding: '0 13px', borderRadius: 16, background: 'rgba(12,12,14,0.86)', color: '#fff', fontFamily: BRAND, fontWeight: 600, fontSize: 19, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap'}}>{TILE[k].app}</div>
+		</div>
+		{/* it lands selected, the way every paste does */}
+		{ring > 0.01 ? <div style={{position: 'absolute', inset: -7, borderRadius: 24, border: `4px solid ${C.signal}`, opacity: ring}} /> : null}
+	</div>
+);
+
+type Row = {y: number; dir: 1 | -1; from: 'top' | 'bottom' | 'left' | 'right'; stab: number; tiles: Kind[]; shift: number};
+const BAND = {top1: 352, bot1: 1568, top2: 680, bot2: 1240}; // the orange after the first stab, after the second
+// each row is centred on its middle tile; the ends only drift into view
+const ROWS: Row[] = [
+	{y: 22, dir: -1, from: 'top', stab: 0, tiles: ['site', 'chart', 'ad', 'code', 'slide'], shift: 10},
+	{y: 1598, dir: 1, from: 'bottom', stab: 0, tiles: ['slide', 'code', 'chart', 'poster', 'ad0'], shift: -30},
+	{y: 346, dir: 1, from: 'right', stab: 1, tiles: ['ad0', 'sheet', 'poster', 'site', 'chart'], shift: 40},
+	{y: 1274, dir: -1, from: 'left', stab: 1, tiles: ['code', 'ad0', 'slide', 'ad', 'sheet'], shift: -20},
+];
+const rowX = (r: Row) => {
+	// x of the row's first tile so that its middle tile is centred (plus shift)
+	const mid = Math.floor(r.tiles.length / 2);
+	let x = 0;
+	for (let i = 0; i < mid; i++) x += TILE[r.tiles[i]].w + GAP;
+	return 540 - x - TILE[r.tiles[mid]].w / 2 + r.shift;
+};
+const DRIFT = 24; // px/s once landed
+const SLAM = 0.26;
+/** where a row is at time tt: it slams in from its edge on its stab, then drifts */
+const rowPos = (r: Row, tt: number, land: number) => {
+	const p = easeOut(clamp01((tt - land) / SLAM));
+	let x = rowX(r) + r.dir * DRIFT * Math.max(0, tt - land);
+	let y = r.y;
+	if (r.from === 'top') y = lerp(-TH - 30, r.y, p);
+	if (r.from === 'bottom') y = lerp(1920 + 30, r.y, p);
+	if (r.from === 'right') x += (1 - p) * 640;
+	if (r.from === 'left') x -= (1 - p) * 640;
+	return {x, y};
 };
 
 export const Outro: React.FC<{t: number}> = ({t}) => {
-	// ------------------------------------------------ dark: the gallery of copies
-	if (t < O.trumpets) {
-		const draw = easeInOut(clamp01((t - O.draw) / 0.9));
-		const fill = clamp01((t - O.fillAt) / 0.3);
-		const push = 1 + 0.05 * clamp01((t - O.in) / (O.trumpets - O.in));
-		let k = -1;
-		for (let i = 0; i < O.items.length; i++) if (t >= O.items[i] - 0.05) k = i;
-		return (
-			<AbsoluteFill style={{background: '#050506'}}>
-				<div style={{position: 'absolute', inset: 0, transform: `scale(${push})`, transformOrigin: `540px ${SEL.cy}px`}}>
-					{O.items.map((t0, i) => {
-						if (i !== k && i !== k - 1) return null;
-						const a = easeOut(clamp01((t - t0 + 0.05) / 0.35));
-						const o = i === k ? a : 1;
-						const s = 1.04 - 0.04 * a + 0.02 * clamp01((t - t0) / 1.2);
-						return (
-							<div key={i} style={{position: 'absolute', left: 540 - SEL.w / 2, top: SEL.cy - SEL.h / 2, width: SEL.w, height: SEL.h, borderRadius: SEL.r, overflow: 'hidden', opacity: o * (1 - fill), transform: `scale(${s})`, zIndex: i}}>
-								<Proof i={i} w={SEL.w} h={SEL.h} />
-							</div>
-						);
-					})}
-					<Selection t={t} draw={draw} fill={fill} />
-				</div>
-				{/* what each one became */}
-				{k >= 0 ? (
-					<div style={{position: 'absolute', left: 0, right: 0, top: SEL.cy + SEL.h / 2 + 84, display: 'flex', justifyContent: 'center', opacity: 1 - fill}}>
-						<div key={k} style={{height: 64, padding: '0 26px', borderRadius: 18, background: C.signal, color: '#fff', display: 'flex', alignItems: 'center', gap: 14, fontFamily: BRAND, fontWeight: 600, fontSize: 34, letterSpacing: '-0.02em', opacity: easeOut(clamp01((t - O.items[k] + 0.05) / 0.2))}}>
-							<svg width={30} height={30} viewBox="0 0 120 120">
-								<path d={MARK.solid} fill="#fff" />
-								<path d={MARK.corner} fill="none" stroke="#fff" strokeWidth={MARK.sw * 1.35} strokeLinecap="round" strokeDasharray={MARK.array} strokeDashoffset={MARK.offset} />
-							</svg>
-							{TAGS[k]}
-						</div>
-					</div>
-				) : null}
-				<div style={{position: 'absolute', left: 0, right: 0, top: 236, textAlign: 'center', fontFamily: BRAND, fontWeight: 600, fontSize: 62, letterSpacing: '-0.04em', color: '#fff', opacity: step(t, O.items[0], 0.4) * (1 - fill)}}>
-					Copy anything you can see.
-				</div>
-			</AbsoluteFill>
-		);
-	}
+	const S = O.stabs.map((s) => s - E);
+	const p1 = easeOut(clamp01((t - S[0]) / SLAM));
+	const p2 = easeOut(clamp01((t - S[1]) / SLAM));
+	const bandTop = p2 > 0 ? lerp(BAND.top1, BAND.top2, p2) : lerp(0, BAND.top1, p1);
+	const bandBot = p2 > 0 ? lerp(BAND.bot1, BAND.bot2, p2) : lerp(1920, BAND.bot1, p1);
 
-	// ------------------------------------------------ paper: the trumpets
-	const flash = 1 - easeOut(clamp01((t - O.trumpets) / 0.45));
-	const icon = spr(t, O.trumpets, 6.5, 0.6);
-	const sweep = clamp01((t - O.trumpets - 0.25) / 1.1);
-	const word = step(t, O.word, 0.5);
-	const line = step(t, O.line, 0.5);
-	const keysIn = step(t, O.keys[0] - 0.15, 0.4) * (1 - step(t, O.high - 0.2, 0.35));
-	const cta = step(t, O.high, 0.6);
-	const lift = easeInOut(clamp01((t - O.high + 0.2) / 0.8));
-	const fadeOut = easeInOut(clamp01((t - O.fade) / (O.end - 0.6 - O.fade)));
-	const breathe = 1 + 0.03 * clamp01((t - O.trumpets) / (O.end - O.trumpets));
-	const iconSize = lerp(600, 470, lift);
-	// alternate ⌘C / ⌘V on the beats
-	let pressIdx = -1;
-	for (let i = 0; i < O.keys.length; i++) if (t >= O.keys[i]) pressIdx = i;
-	const down = pressIdx >= 0 && t - O.keys[pressIdx] < 0.16 ? 1 : 0;
-	const isV = pressIdx >= 0 && pressIdx % 2 === 1;
+	// pulses on the last stabs, and a slow push to the end
+	const pulse = (s: number, k: number) => (t >= s ? k * Math.exp(-(t - s) / 0.12) : 0);
+	const punch = 1 + pulse(S[5], 0.022) + pulse(S[6], 0.032);
+	const push = 1 + 0.018 * easeInOut(clamp01((t - S[6]) / (O.end - S[6])));
+	const reRing = (s: number) => (t >= s ? 0.55 * Math.exp(-(t - s) / 0.18) : 0);
+
+	// ---------------------------------------------------------------- the name: stacked, then one line
+	// the mark moves first, then the name rises beside it (so they never cross)
+	const lk = easeInOut(clamp01((t - S[1] + 0.02) / 0.24));
+	const lw = easeInOut(clamp01((t - S[1] - 0.08) / 0.3));
+	const wFull = textW('Paste Real', 150, 600, BRAND, -0.045);
+	const mS = lerp(260, 112, lk);
+	const wS = lerp(1, 112 / 150, lw);
+	const rowWidth = 112 + 32 + wFull * (112 / 150);
+	const mX = lerp(540, 540 - rowWidth / 2 + 56, lk);
+	const mY = lerp(862, 845, lk);
+	const wX = lerp(540, 540 - rowWidth / 2 + 112 + 32 + (wFull * (112 / 150)) / 2, lw);
+	const wY = lerp(1113, 845, lw);
+	const squeeze = 1 - 0.06 * p1 * (1 - lk);
+	const l1 = easeOut(clamp01((t - S[2]) / 0.3));
+	const l2 = easeOut(clamp01((t - S[3]) / 0.3));
+	const mac = easeOut(clamp01((t - S[4]) / 0.4));
+
+	const fade = easeInOut(clamp01((t - (O.noteEnd - 0.16)) / (O.end - (O.noteEnd - 0.16))));
 
 	return (
-		<AbsoluteFill style={{background: C.paper, overflow: 'hidden'}}>
-			<div style={{position: 'absolute', inset: 0, background: 'radial-gradient(70% 45% at 50% 34%, rgba(255,255,255,0.85), rgba(255,255,255,0) 70%)'}} />
-			<div style={{position: 'absolute', inset: 0, transform: `scale(${breathe})`, transformOrigin: '540px 900px'}}>
-				{/* the icon */}
-				<div style={{position: 'absolute', left: 540 - iconSize / 2, top: lerp(250, 230, lift) + (600 - iconSize) * 0.1, width: iconSize, height: iconSize, opacity: clamp01(icon * 1.4), transform: `scale(${0.82 + 0.18 * icon}) translateY(${Math.sin((t - O.trumpets) * 1.3) * 6}px)`}}>
-					<Img src={staticFile('img/icon_hero.png')} style={{width: '100%', height: '100%'}} />
-					{/* a light sweep across the glass */}
-					{sweep > 0 && sweep < 1 ? (
-						<div
-							style={{
-								position: 'absolute',
-								inset: 0,
-								WebkitMaskImage: `url(${staticFile('img/icon_hero.png')})`,
-								WebkitMaskSize: '100% 100%',
-								background: `linear-gradient(115deg, rgba(255,255,255,0) ${lerp(-30, 110, sweep) - 14}%, rgba(255,255,255,0.55) ${lerp(-30, 110, sweep)}%, rgba(255,255,255,0) ${lerp(-30, 110, sweep) + 14}%)`,
-								mixBlendMode: 'screen',
-							}}
-						/>
-					) : null}
-				</div>
-				{/* the name */}
-				<div style={{position: 'absolute', left: 0, right: 0, top: lerp(880, 760, lift), display: 'flex', justifyContent: 'center', opacity: word, transform: `translateY(${(1 - word) * 26}px)`}}>
-					<Wordmark size={156} color={C.ink} />
-				</div>
-				{/* the line */}
-				<div style={{position: 'absolute', left: 0, right: 0, top: lerp(1080, 952, lift), textAlign: 'center', fontFamily: BRAND, fontWeight: 600, fontSize: 58, lineHeight: 1.2, letterSpacing: '-0.035em', color: C.graphite, opacity: line, transform: `translateY(${(1 - line) * 20}px)`}}>
-					Copy anything you can see.
-					<br />
-					<span style={{color: C.signal}}>Paste it real.</span>
-				</div>
-				{/* the shortcut, pressed on the trumpets */}
-				{keysIn > 0 ? (
-					<div style={{position: 'absolute', left: 0, right: 0, top: 1300, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 22, opacity: keysIn, transform: `translateY(${(1 - keysIn) * 30}px)`}}>
-						<Keycap size={150} dark={false} down={down} label={<CmdGlyph size={64} color="#1D1D1F" />} />
-						<div style={{fontSize: 60, color: C.mist, fontWeight: 300, fontFamily: SYS}}>+</div>
-						<Keycap
-							size={150}
-							dark={false}
-							down={down}
-							label={
-								<div style={{position: 'relative', width: 70, height: 80, fontFamily: SYS, fontWeight: 500, fontSize: 68, color: '#1D1D1F'}}>
-									<span style={{position: 'absolute', inset: 0, textAlign: 'center', opacity: isV ? 0 : 1}}>C</span>
-									<span style={{position: 'absolute', inset: 0, textAlign: 'center', opacity: isV ? 1 : 0}}>V</span>
-								</div>
-							}
-						/>
-						<div style={{width: 250, fontFamily: BRAND, fontWeight: 600, fontSize: 46, letterSpacing: '-0.03em', color: C.ink, marginLeft: 18}}>{pressIdx < 0 ? 'Copy.' : isV ? 'Paste.' : 'Copy.'}</div>
+		<AbsoluteFill style={{background: C.ink, overflow: 'hidden'}}>
+			<div style={{position: 'absolute', inset: 0, transform: `scale(${push})`, transformOrigin: '540px 960px'}}>
+				{/* everything it made, in rows */}
+				{ROWS.map((r, ri) => {
+					const land = S[r.stab];
+					if (t < land) return null;
+					const ring = clamp01(clamp01(1 - (t - land) / 0.55) + reRing(S[5]) + reRing(S[6]));
+					// motion blur while it slams in: the row at a few instants across half a frame, averaged
+					const at = (tt: number) => rowPos(r, tt, land);
+					const a = at(t),
+						b = at(t - 0.5 / 60);
+					const n = Math.max(1, Math.min(12, Math.ceil(Math.hypot(a.x - b.x, a.y - b.y) / 10)));
+					return Array.from({length: n}, (_, k) => {
+						const q = at(t - (k / Math.max(1, n - 1)) * (0.5 / 60));
+						let cx = q.x;
+						return (
+							<div key={`${ri}-${k}`} style={{position: 'absolute', left: 0, top: q.y, width: 1080, height: TH, opacity: 1 / (k + 1)}}>
+								{r.tiles.map((kind, i) => {
+									const left = cx;
+									cx += TILE[kind].w + GAP;
+									if (left > 1120 || left + TILE[kind].w < -40) return null;
+									return (
+										<div key={i} style={{position: 'absolute', left, top: 0}}>
+											<Tile k={kind} ring={ring} />
+										</div>
+									);
+								})}
+							</div>
+						);
+					});
+				})}
+
+				{/* the rows sit back a little toward the edges of the frame */}
+				{p1 > 0 ? <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(12,12,14,0.42) 0%, rgba(12,12,14,0) 30%, rgba(12,12,14,0) 70%, rgba(12,12,14,0.42) 100%)'}} /> : null}
+				{/* the orange, squeezed into a band around the name */}
+				<div style={{position: 'absolute', left: 0, right: 0, top: bandTop, height: bandBot - bandTop, background: `linear-gradient(180deg, #FF6428 0%, ${C.signal} 45%, #F7531B 100%)`, boxShadow: p1 > 0 ? '0 0 60px rgba(0,0,0,0.35)' : undefined}} />
+
+				<div style={{position: 'absolute', inset: 0, transform: `scale(${punch * squeeze})`, transformOrigin: '540px 960px'}}>
+					<div style={{position: 'absolute', left: mX - mS / 2, top: mY - mS / 2}}>
+						<Mark size={mS} color={C.ink} ink={C.ink} fill={1} march={(t - F.silence) * 1.2} id="wall" />
 					</div>
-				) : null}
-				{/* early access */}
-				{cta > 0 ? (
-					<div style={{position: 'absolute', left: 0, right: 0, top: 1240, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40, opacity: cta, transform: `translateY(${(1 - cta) * 30}px)`}}>
-						<div style={{height: 116, padding: '0 54px', borderRadius: 58, background: C.ink, color: '#fff', display: 'flex', alignItems: 'center', gap: 20, fontFamily: BRAND, fontWeight: 600, fontSize: 50, letterSpacing: '-0.03em', boxShadow: '0 24px 50px rgba(12,12,14,0.18)'}}>
-							Get early access
-							<svg width={40} height={40} viewBox="0 0 24 24">
-								<path d="M12 4v15M6 13l6 6 6-6" stroke={C.signal} strokeWidth={2.6} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-							</svg>
-						</div>
-						<div style={{fontFamily: BRAND_MONO, fontWeight: 500, fontSize: 30, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.graphite}}>Coming to Mac</div>
+					<div style={{position: 'absolute', left: wX, top: wY, transform: `translate(-50%, -50%) scale(${wS})`}}>
+						<Wordmark size={150} color={C.ink} />
 					</div>
-				) : null}
+					{/* the line */}
+					<div style={{position: 'absolute', left: 0, right: 0, top: 941, textAlign: 'center', fontFamily: BRAND, fontWeight: 600, fontSize: 54, lineHeight: 1.15, letterSpacing: '-0.035em'}}>
+						<div style={{color: C.ink, opacity: l1, transform: `translateY(${(1 - l1) * 18}px)`}}>Copy anything you can see.</div>
+						<div style={{color: '#fff', opacity: l2, transform: `translateY(${(1 - l2) * 18}px)`}}>Paste it real.</div>
+					</div>
+					<div style={{position: 'absolute', left: 0, right: 0, top: 1103, textAlign: 'center', fontFamily: BRAND_MONO, fontWeight: 500, fontSize: 28, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(12,12,14,0.72)', opacity: mac, transform: `translateY(${(1 - mac) * 12}px)`}}>
+						Coming to Mac
+					</div>
+				</div>
 			</div>
-			{/* the trumpets hit: a flash of light */}
-			{flash > 0 ? <div style={{position: 'absolute', inset: 0, background: '#fff', opacity: flash * 0.9}} /> : null}
-			{fadeOut > 0 ? <div style={{position: 'absolute', inset: 0, background: '#000', opacity: fadeOut}} /> : null}
+			{fade > 0 ? <div style={{position: 'absolute', inset: 0, background: '#000', opacity: fade}} /> : null}
 		</AbsoluteFill>
 	);
 };

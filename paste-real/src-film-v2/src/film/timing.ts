@@ -62,19 +62,10 @@ export const F = {
 	end: T.outroIn,
 };
 
-// the outro over the song's ending
-const B = T.outroBeats;
-const near = (x: number) => B.reduce((a, b) => (Math.abs(b - x) < Math.abs(a - x) ? b : a), B[0]);
+// the finale over the song's trumpets: every stab is a paste
 export const O = {
 	in: T.outroIn,
-	draw: T.outroIn + 0.06,
-	items: [near(28.63), near(29.55), near(30.59), near(31.62), near(32.71), near(33.75)],
-	fillAt: T.trumpets - 0.3,
-	trumpets: T.trumpets,
-	word: near(35.39),
-	line: near(36.45),
-	keys: [near(38.04), near(38.56), near(39.13), near(39.71), near(40.28), near(40.83), near(41.38)],
-	high: T.high,
-	fade: T.fade,
+	stabs: T.stabs,
+	noteEnd: T.noteEnd,
 	end: T.DUR,
 };

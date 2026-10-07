@@ -2,10 +2,18 @@
 
 Idea from the idea bank (`ideas/paste-real.md`): grab any design you can see on your screen (an ad, a website, a frame of a video) and paste it as a real, editable design: separate layers in Figma, a real chart in Keynote, working code, a real table.
 
-- `paste-real-v2-9x16.mp4`: **the current cut**, vertical 1080x1920, 56.3 s, 60 fps, with sound.
+- `paste-real-v3-9x16.mp4`: **the current cut**, vertical 1080x1920, 32.5 s, 60 fps, with sound: v2 re-cut to end on the song's trumpets, with a full-frame finale.
+- `paste-real-v2-9x16.mp4`: v2, the same film with the long 56.3 s ending.
 - `brand/`: the brand boards (identity, icon/colour/type, the product's UI language).
-- `src-film-v2/`: its Remotion source, the song edit, the sound design and the Blender scenes.
+- `src-film-v2/`: the Remotion source, the song edit, the sound design and the Blender scenes. It builds v3; v2 is commit `293b1b6`.
 - `paste-real-9x16.mp4` and `src-film/`: the first cut (27.7 s), kept for reference; notes at the bottom.
+
+## v3: the 32 s cut
+
+James's notes on v2: the start and the visuals are good, but the ending had too much empty space, the trumpets come in around 31 s, and it would be better at about that length. So v3 keeps everything up to the name and replaces the ending:
+
+- The song ends on its trumpets. After the pause at 1:43 it plays the seven horn stabs and stops on the last one, while the bass holds its low note to its own release (`music/edl_v3.json`: `edit.py` fades the band out of the song right after the last stab, using demucs's "other" stem, so only the held bass note rings). 32.5 s in all.
+- The finale fills the frame. On the first two stabs, rows of everything Paste Real made in the film (the ad in Figma, the chart in Keynote, the component in VS Code, the site on localhost, the slide, the poster, the sheet) slam in from the edges and squeeze the orange into a band around the name, which settles into one line. The line lands on the next two stabs ("Copy anything you can see." / "Paste it real."), then "Coming to Mac"; the last two stabs punch the frame and every tile flashes selected. Fade on the bass note's release.
 
 ## v2: the film
 
@@ -51,16 +59,18 @@ The song is not in this repo. Put the instrumental at `src-film-v2/music/allcaps
 ```
 cd src-film-v2
 npm i
-python3 music/edit.py music/edl_jump.json     # cuts the song: music/bed.wav + src/cues.json (film-time cues)
+# the ending needs demucs's "other" stem of the instrumental, resampled to 48 kHz, at music/stems/other48.wav:
+#   demucs -n htdemucs allcaps_instr.wav && ffmpeg -i separated/htdemucs/allcaps_instr/other.wav -ar 48000 -c:a pcm_f32le music/stems/other48.wav
+python3 music/edit.py music/edl_v3.json       # cuts the song: music/bed.wav + src/cues.json (film-time cues); edl_jump.json is v2's
 npx remotion render src/index.ts Film out/film.mp4 --codec=h264 --crf=18 --concurrency=4 --muted
 music/decode_sfx.sh                           # the Riff sound effects (../../riff/sfx) as raw audio for the mix
 npx esbuild src/film/sfxcues.ts --bundle --platform=node --format=cjs --outfile=out/sfxcues.cjs && node out/sfxcues.cjs > music/sfx_cues.json
 cd music && python3 sfx_mix.py bed.wav sfx_cues.json mix.wav && ./master.sh mix.wav master.wav && cd ..
-./mux.sh out/film.mp4 music/master.wav paste-real-v2-9x16.mp4 18
+./mux.sh out/film.mp4 music/master.wav paste-real-v3-9x16.mp4 18
 ```
 
-- Every cue is on the song's grid: `at(bar, beat)` in `src/lib/beat.ts`. The opening's cues are in `src/film/T.ts`, every later scene's in `src/film/timing.ts`; the sound mix reads the same module (`sfxcues.ts`), so a sound can't drift off its picture.
-- Scenes: `Hook.tsx` (the ad into Figma), `Scene2.tsx` (chart into Keynote), `Scene3.tsx` (website into VS Code), `Montage.tsx`, `Finale.tsx` (the stop and the slam), `Outro.tsx` (the trumpets). Shared machinery (camera, cursor, the keystroke pill, the flying copy, captions) is in `kit.tsx`; the Mac (menu bar, windows, cursor) in `src/mac/mac.tsx`; the brand (mark, wordmark, keycaps, the selection) in `src/brand/brand.tsx`.
+- Every cue is on the song's grid: `at(bar, beat)` in `src/lib/beat.ts`. The opening's cues are in `src/film/T.ts`, every later scene's in `src/film/timing.ts` (the trumpet stabs come from `music/cues_src.json`, measured on the song); the sound mix reads the same module (`sfxcues.ts`), so a sound can't drift off its picture.
+- Scenes: `Hook.tsx` (the ad into Figma), `Scene2.tsx` (chart into Keynote), `Scene3.tsx` (website into VS Code), `Montage.tsx`, `Finale.tsx` (the stop and the slam), `Outro.tsx` (the finale on the trumpets). Shared machinery (camera, cursor, the keystroke pill, the flying copy, captions) is in `kit.tsx`; the Mac (menu bar, windows, cursor) in `src/mac/mac.tsx`; the brand (mark, wordmark, keycaps, the selection) in `src/brand/brand.tsx`.
 - `blender/can.py` renders the cans in Cycles on a shadow catcher (the label is `label.html`, screenshotted by `render.mjs`), `blender/icon3d.py` the app icon; `tools/feather_can.py` fades the catcher's floor so only a soft contact shadow stays.
 - Stills for checking: `node stills.mjs Film 0.3 9.5 22.7` writes `out/s_Film_*.png`. The brand boards: `node boards.mjs Board1 Board2 Board3`.
 - `remotion.config.ts` points at the Chromium that the cloud container ships; change it or remove the line elsewhere.

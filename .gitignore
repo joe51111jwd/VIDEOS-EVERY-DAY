@@ -9,4 +9,5 @@ paste-real/src-film/audio/*.wav
 paste-real/src-film-v2/music/*.wav
 paste-real/src-film-v2/music/*.f32
 paste-real/src-film-v2/music/sfx/
+paste-real/src-film-v2/music/stems/
 paste-real/src-film-v2/public/music/
