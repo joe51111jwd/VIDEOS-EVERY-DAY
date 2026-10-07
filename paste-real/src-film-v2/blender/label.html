@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Archivo';src:url(../brand/fonts/Archivo-normal-var.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%}
+@font-face{font-family:'Geist';src:url(../brand/fonts/Geist-var.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:'Instrument Serif';src:url(../brand/fonts/InstrumentSerif-400-italic.woff2) format('woff2');font-style:italic}
+html,body{margin:0;padding:0}
+/* the label wraps the whole can: 2048 x 1024 = circumference x height (aspect ~ 2*pi*26.5 : 110 mm) */
+.label{width:2048px;height:1440px;position:relative;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'Archivo'}
+.front{position:absolute;left:1024px;top:0;width:640px;height:100%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:40px;box-sizing:border-box}
+.word{font-weight:900;font-stretch:70%;font-size:380px;letter-spacing:-0.02em;line-height:.86;text-align:center}
+.sub{font:600 38px 'Geist';letter-spacing:.32em;margin-top:44px;text-transform:uppercase}
+.flav{font:400 96px 'Instrument Serif';font-style:italic;margin-top:30px;letter-spacing:-0.01em}
+.ring{position:absolute;left:0;right:0;height:14px;background:var(--ink);opacity:.9}
+.bottom{position:absolute;bottom:84px;left:1024px;transform:translateX(-50%);font:600 30px 'Geist';letter-spacing:.24em;opacity:.85}
+.side{position:absolute;top:520px;font:500 28px/1.5 'Geist';letter-spacing:.04em;opacity:.8;width:420px}
+.dots{position:absolute;inset:0;background-image:radial-gradient(var(--dot) 2.2px, transparent 2.6px);background-size:34px 34px;opacity:.5}
+</style></head>
+<body>
+<div class="label" id="L">
+  <div class="dots"></div>
+  <div class="ring" style="top:150px"></div>
+  <div class="ring" style="bottom:150px"></div>
+  <div class="front">
+    <div class="word">LULL</div>
+    <div class="sub">Sparkling water</div>
+    <div class="flav" id="flav">yuzu &amp; salt</div>
+    <div style="margin-top:46px;width:120px;height:120px;border-radius:60px;border:5px solid var(--ink);display:flex;align-items:center;justify-content:center;font:700 30px Geist;letter-spacing:.06em">N°3</div>
+  </div>
+  <div class="side" style="left:260px">Lightly sparkling. No sugar, nothing fake. Canned cold in small batches.</div>
+  <div class="side" style="left:1490px;text-align:right">12 FL OZ · 355 ML<br/>RECYCLE ME</div>
+  <div class="bottom">LULL — DRINK SLOW</div>
+</div>
+<script>
+const p = new URLSearchParams(location.search);
+const L = document.getElementById('L');
+L.style.setProperty('--bg', p.get('bg') || '#2340FF');
+L.style.setProperty('--ink', p.get('ink') || '#F6F3EA');
+L.style.setProperty('--dot', p.get('dot') || 'rgba(255,255,255,.10)');
+if (p.get('flav')) document.getElementById('flav').textContent = p.get('flav');
+</script>
+</body></html>
