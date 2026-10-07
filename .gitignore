@@ -2,3 +2,7 @@ node_modules/
 .env*
 .vercel/
 out/
+# Paste Real: the song (ALL CAPS instrumental) and anything cut from it stays out of this public repo
+paste-real/src-film/music/*.wav
+paste-real/src-film/public/music/
+paste-real/src-film/audio/*.wav
