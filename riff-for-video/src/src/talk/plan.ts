@@ -10,7 +10,7 @@ export type Cut = {id: ShotId; a: number; off: number};
 const CUTS: [ShotId, number, number][] = [
 	['ts', 0, 0.2],
 	['kick', 1, 0.11],
-	['cab', 3, 0.15],
+	['sub', 3, 0.0],
 	['grid', 4, 0.2],
 	['face', 4.5, 0.95],
 	['low', 5, 0.3],

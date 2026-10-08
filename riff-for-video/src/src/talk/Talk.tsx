@@ -5,7 +5,7 @@ import {T} from './beat';
 import {CUT_A, CUT_B} from './plan';
 import {Hook} from './Hook';
 import {CutView} from './Cut';
-import {camE, Editor} from './Editor';
+import {camE, DIVE, Editor} from './Editor';
 import {End} from './End';
 import {Hud} from './Hud';
 import {Pill} from './Pill';
@@ -20,13 +20,13 @@ const Picture: React.FC<{t: number}> = ({t}) => {
 
 /** film-style motion blur (180° shutter) on the fast moves: the reframe, the pull-back and the push-in */
 const BLUR = 12;
-const moving = (t: number) => (t > T.vertical && t < T.vertical + 0.45) || (t > T.pull && t < T.pull + 0.82) || (t > T.push - 0.64 && t < T.push);
+const moving = (t: number) => (t > T.vertical && t < T.vertical + 0.45) || (t > T.pull && t < T.pull + 0.82) || (t > T.push - DIVE - 0.02 && t < T.push);
 
 /** the pill: on the hook until the cut lands, hidden over the montage, back once the editor is in view */
 const pillShow = (t: number) => {
 	if (t < T.slam + 0.3) return 1;
 	if (t < T.pull) return 1 - clamp01((t - T.slam - 0.3) / 0.15);
-	return step(t, T.pull + 0.55, 0.3) * (1 - clamp01((t - (T.push - 0.6)) / 0.3));
+	return step(t, T.pull + 0.55, 0.3) * (1 - clamp01((t - (T.push - DIVE)) / 0.25));
 };
 const pillY = (t: number) => (t < T.pull ? 1560 : lerp(1560, 1446, camE(t)));
 /** the count stays up through the finished cut and gives way to the end card */

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Img, staticFile} from 'remotion';
+import {Img} from 'remotion';
 import {C, MONO, SANS, clamp01, easeIn, easeInOut, easeOut, lerp} from '../lib/tokens';
 import {RiffIcon} from '../lib/riff';
 import env from '../edit/env/ny.json';
@@ -28,10 +28,12 @@ const VX = WIN.x + PIC.x;
 const VY = WIN.y + PIC.y;
 
 /** 0 = the viewer fills the screen, 1 = pulled back to the whole editor */
+/** the dive back into the viewer: starts once the title has landed, slow, and accelerates onto beat 148 */
+export const DIVE = 1.5;
 export const camE = (t: number) => {
 	if (t < T.pull) return 0;
 	const out = easeInOut(clamp01((t - T.pull) / 0.8));
-	const back = easeIn(clamp01((t - (T.push - 0.62)) / 0.62));
+	const back = easeIn(clamp01((t - (T.push - DIVE)) / DIVE));
 	return out * (1 - back);
 };
 /** the screen's view of the scene: transform for the camera at e */
@@ -71,7 +73,7 @@ const fmt = (s: number) => {
 	return `${p(Math.floor(f / 1800))}:${p(Math.floor(f / 30) % 60)}:${p(f % 30)}`;
 };
 
-const NAMES: Record<string, string> = {hk: 'court_night_03', ts: 'times_sq_rain', kick: 'kick_low', cab: 'cab_7th_ave', grid: 'grid_top', face: 'court_close', low: 'court_low', umb: 'umbrellas', sky: 'skyline_bokeh'};
+const NAMES: Record<string, string> = {hk: 'court_night_03', ts: 'times_sq_rain', kick: 'kick_low', sub: 'six_train', cab: 'cab_7th_ave', grid: 'grid_top', face: 'court_close', low: 'court_low', umb: 'umbrellas', sky: 'skyline_bokeh'};
 
 const Clip: React.FC<{x: number; w: number; id: ShotId; thumbs?: number[]; children?: React.ReactNode}> = ({x, w, id, thumbs = [0.3], children}) => {
 	const tw = LANE.v1.h * (9 / 16);
@@ -260,4 +262,3 @@ export const Editor: React.FC<{t: number}> = ({t}) => {
 	);
 };
 
-export {staticFile};
