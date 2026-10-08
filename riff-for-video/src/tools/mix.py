@@ -36,9 +36,16 @@ for l in cues['voice']:
 for t, name, g in cues['sfx']:
     place(sfx, load(P('public', 'sfx', name + '.wav')), t, g)
 m = cues['music']
-mpath = sys.argv[1] if len(sys.argv) > 1 else P('public', 'music', m['file'] + '.wav')
+mpath = sys.argv[1] if len(sys.argv) > 1 else P('out', 'music', m['file'] + '.wav')
 off = float(sys.argv[2]) if len(sys.argv) > 2 else m['offset']
-place(music, load(mpath), -off)
+# with stems (tools/song.py), the drums stop at `drumsOut` while the rest rings out to the end of `fadeOut`
+stems = 'drumsOut' in m and len(sys.argv) <= 1 and os.path.exists(P('out', 'music', m['file'] + '-drums.wav'))
+drums = np.zeros((N, 2), np.float32)
+if stems:
+    place(drums, load(P('out', 'music', m['file'] + '-drums.wav')), -off)
+    place(music, load(P('out', 'music', m['file'] + '-rest.wav')), -off)
+else:
+    place(music, load(mpath), -off)
 # duck the music under each spoken command
 act = np.zeros(N, np.float32)
 for l in cues['voice']:
@@ -47,7 +54,11 @@ env = smooth(act, 0.06, 0.35)
 g = m['gain'] * (1 - m['duck'] * env)
 t = np.arange(N) / SR
 f0, f1 = m['fadeOut']
-g *= np.clip((f1 - t) / (f1 - f0), 0, 1)
+g *= np.clip((f1 - t) / (f1 - f0), 0, 1) ** 2  # the last hit rings out rather than fading flat
+g *= np.clip(t / 0.005, 0, 1)  # no click on the first downbeat
+if stems:
+    d0, d1 = m['drumsOut']
+    music += drums * np.clip((d1 - t) / (d1 - d0), 0, 1)[:, None]
 music *= g[:, None]
 mix = voice * 1.0 + music + sfx * 0.8
 mix = mix[:int(round(cues['duration'] * SR))]

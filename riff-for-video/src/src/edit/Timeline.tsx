@@ -2,12 +2,14 @@ import React from 'react';
 import {staticFile} from 'remotion';
 import {C, MONO, SANS, clamp01, easeInOut, easeOut, pulse} from '../lib/tokens';
 import {CLIPS, LSeg, layoutAt, lookAt, playheadAt} from './model';
-import {ACT, BEAT, BEAT0} from './timing';
+import {ACT, BEAT, BEAT0, PLAN, SONG} from './timing';
 import {HEAD_W, LANE, PHX, PPS, TL, WIN} from './layout';
 import {IEye, ILock, IMagnet, IScissors, ISpeaker, noise} from './ui';
-import musicEnv from './musicEnv.json';
+import skinEnv from './env/skin.json';
+import nysomEnv from './env/nysom.json';
 
-const ENV = musicEnv as number[];
+/** the song's real loudness, so the A2 waveform looks like what you hear */
+const ENV = (SONG === 'nysom' ? nysomEnv : skinEnv) as number[];
 const THUMB_W = 214;
 const nThumbs = (clip: string) => Math.ceil(CLIPS[clip].frames / 7.5);
 
@@ -59,10 +61,10 @@ export const Timeline: React.FC<{t: number}> = ({t}) => {
 		const w = g.dur * PPS - 2;
 		if (!visible(x0, x0 + w) || w < 2) continue;
 		// the footage regrades in a wave from left to right after the viewer wipe
-		const regrade = clamp01((t - (ACT.grade + 0.12 + (x0 / WIN.w) * 0.4)) / 0.12);
+		const regrade = t < ACT.rew1 ? (L.wipe > 0.5 ? 1 : 0) : clamp01((t - (ACT.grade + 0.12 + (x0 / WIN.w) * 0.4)) / 0.12);
 		const sel = g.id === 'C1' && t >= ACT.loseSel && t < ACT.lift + 0.3;
 		const ins = g.id === 'M' ? pulse(t, ACT.insert + 0.2, 0.08, 0.9) : 0;
-		const slow = g.id === 'Cs' && t >= ACT.slow;
+		const slow = g.id === 'Cs' && (t >= ACT.slow || t < ACT.rew1);
 		const ring = sel ? 1 : ins;
 		v1.push(
 			<div
@@ -101,7 +103,7 @@ export const Timeline: React.FC<{t: number}> = ({t}) => {
 							display: 'flex',
 							alignItems: 'center',
 							paddingLeft: 9,
-							opacity: easeOut(clamp01((t - ACT.slow - 0.2) / 0.25)),
+							opacity: t < ACT.rew1 ? 1 : easeOut(clamp01((t - ACT.slow - 0.2) / 0.25)),
 						}}
 					>
 						Slow-mo 50%
@@ -240,7 +242,7 @@ export const Timeline: React.FC<{t: number}> = ({t}) => {
 
 	// ---------- look adjustment clip (V2)
 	const lookName = L.teal > 0.01 ? `Look · Deep Teal ${L.intensity}%` : 'Look · Moody';
-	const lookP = easeOut(clamp01((t - ACT.grade) / 0.5));
+	const lookP = t < ACT.rew1 ? 1 - easeInOut(clamp01((t - ACT.rew0) / (ACT.rew1 - ACT.rew0))) : easeOut(clamp01((t - ACT.grade) / 0.5));
 
 	const lane = (y: number, h: number) => <div style={{position: 'absolute', left: HEAD_W, right: 0, top: y, height: h, background: C.lane}} />;
 	const head = (y: number, h: number, tag: string, name: string, icon: React.ReactNode) => (
@@ -314,14 +316,14 @@ export const Timeline: React.FC<{t: number}> = ({t}) => {
 						return 0.12 + 0.95 * (ENV[Math.max(0, Math.round(s * 30))] ?? 0);
 					}}
 				/>
-				<div style={{position: 'absolute', left: Math.max(10, PHX - mX0 - 440), bottom: 6, fontFamily: SANS, fontSize: 12.5, fontWeight: 650, color: '#E4DBFF', whiteSpace: 'nowrap'}}>♪ Temp track</div>
+				<div style={{position: 'absolute', left: Math.max(10, PHX - mX0 - 440), bottom: 6, fontFamily: SANS, fontSize: 12.5, fontWeight: 650, color: '#E4DBFF', whiteSpace: 'nowrap'}}>♪ {PLAN.title}</div>
 			</div>
 			<div style={{position: 'absolute', left: 0, top: LANE.a2.y, width: WIN.w, height: 16}}>{beats}</div>
 			{marks}
 			{/* header column */}
 			<div style={{position: 'absolute', left: 0, top: 0, width: HEAD_W, height: TL.h, background: '#0F0F12', borderRight: `1px solid ${C.line}`}}>
 				<div style={{position: 'absolute', left: 12, top: 9, display: 'flex', gap: 8, alignItems: 'center'}}>
-					<IMagnet size={15} color={t >= ACT.beat ? C.ember : '#8E8E96'} />
+					<IMagnet size={15} color={t >= ACT.beat || t < ACT.rew1 ? C.ember : '#8E8E96'} />
 				</div>
 				{head(LANE.v3.y, LANE.v3.h, 'V3', 'Titles', <IEye />)}
 				{head(LANE.v2.y, LANE.v2.h, 'V2', 'Look', <IEye />)}

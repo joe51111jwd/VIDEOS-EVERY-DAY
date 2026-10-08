@@ -3,16 +3,17 @@ import {useCurrentFrame} from 'remotion';
 import {C, MONO, SANS, clamp01, tc} from '../lib/tokens';
 import {RiffIcon} from '../lib/riff';
 import {playheadAt} from './model';
-import {ACT, LINES} from './timing';
+import {ACT, CMDS, FLY} from './timing';
 import {PHX, TB, TRANS, WIN} from './layout';
 import {IPause, IPlay, ISidebar, ISkip, IShare, Toast, Traffic, noise} from './ui';
 
-/** 0..1 loudness of the spoken command at film time t (drives meters and the mic glow) */
+/** 0..1 "speaking" level while a command's words appear (drives the meters and the mic glow) */
 export const voiceLevel = (t: number) => {
 	let v = 0;
-	for (const l of LINES) {
-		if (t >= l.a - 0.02 && t <= l.b - 0.05) {
-			const edge = Math.min(clamp01((t - l.a) / 0.06), clamp01((l.b - 0.05 - t) / 0.12));
+	for (const c of CMDS) {
+		const b = c.land - FLY;
+		if (t >= c.a - 0.02 && t <= b) {
+			const edge = Math.min(clamp01((t - c.a) / 0.06), clamp01((b - t) / 0.1));
 			v = Math.max(v, edge * (0.45 + 0.55 * noise(t * 9.0, 3)));
 		}
 	}
@@ -71,14 +72,15 @@ const Listening: React.FC<{t: number}> = ({t}) => {
 const Transport: React.FC<{t: number}> = ({t}) => {
 	const T = playheadAt(t);
 	const toasts: [number, string, number, ('riff' | 'cut')?][] = [
+		[ACT.rew0 + 0.05, 'Rewind', 0.9],
 		[ACT.cut, 'Split at ' + tc(7.5).slice(3), 0.75, 'cut'],
-		[ACT.lift, 'Removed 2.0 s', 0.8],
+		[ACT.lift, 'Removed 2.0 s', 0.75],
 		[ACT.rewind - 0.05, 'Replay', 0.7],
-		[ACT.restore, 'Cut removed', 0.9],
-		[ACT.trim, 'Trimmed 2.0 s', 0.9],
-		[ACT.markIn - 0.02, 'In', 0.6],
+		[ACT.restore, 'Cut undone', 0.8],
+		[ACT.trim, 'Trimmed 2.0 s', 0.75],
+		[ACT.markIn - 0.02, 'In', 0.5],
 		[ACT.markOut - 0.02, 'Out', 0.25],
-		[ACT.slow, 'Slow-mo 50%', 1.0],
+		[ACT.slow, 'Slow-mo 50%', 0.9],
 		[ACT.insert, 'Inserted · smile', 0.9],
 		[ACT.beat + 0.1, '9 cuts on the beat', 1.0],
 	];

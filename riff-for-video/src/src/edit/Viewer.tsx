@@ -1,7 +1,7 @@
 import React from 'react';
 import {Img, staticFile} from 'remotion';
 import {C, MONO, SANS, easeInOut, tc} from '../lib/tokens';
-import {CLIPS, frameAt, layoutAt, lookAt, pad4, playheadAt} from './model';
+import {CLIPS, lookAt, pad4, playheadAt, viewFrame} from './model';
 import {ACT} from './timing';
 import {VIEW, WIN} from './layout';
 import {Toast} from './ui';
@@ -53,9 +53,8 @@ const chip: React.CSSProperties = {
 };
 
 export const Viewer: React.FC<{t: number}> = ({t}) => {
-	const segs = layoutAt(t);
 	const T = playheadAt(t);
-	const f = frameAt(segs, T);
+	const f = viewFrame(t);
 	const L = lookAt(t);
 	const look = L.teal > 0.01 ? `Deep Teal ${L.intensity}%` : L.wipe > 0.5 ? 'Moody' : 'Log';
 	// a tiny flash on the frame when an edit lands

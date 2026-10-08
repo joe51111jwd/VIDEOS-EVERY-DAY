@@ -7,3 +7,8 @@ src/public/s/
 src/public/v/
 # music: the soundtrack is never committed
 src/public/music/
+# songs, stems and instrumentals: never committed
+*.mp3
+*.flac
+src/stems/
+src/songs/

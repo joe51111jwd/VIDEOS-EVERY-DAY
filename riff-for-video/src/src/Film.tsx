@@ -11,9 +11,7 @@ import {VoiceHUD} from './edit/HUD';
 import {Trackpad} from './edit/Trackpad';
 import {Finale, pushTransform} from './edit/Finale';
 
-/** Riff for Video — one take in the editor, every edit spoken, then the vertical cut. Audio is mixed by tools/mix.py. */
-export const Film: React.FC = () => {
-	const t = useCurrentFrame() / FPS;
+const Scene: React.FC<{t: number}> = ({t}) => {
 	const hide = clamp01((t - ACT.expand + 0.1) / 0.25);
 	return (
 		<AbsoluteFill style={{background: '#000'}}>
@@ -33,6 +31,27 @@ export const Film: React.FC = () => {
 			) : null}
 			<VoiceHUD t={t} hide={hide} />
 			<Finale t={t} />
+		</AbsoluteFill>
+	);
+};
+
+/** film-style motion blur (180° shutter) while the camera pulls out of or pushes into the vertical cut */
+const BLUR = 12;
+const moving = (t: number) => (t > ACT.pull0 && t < ACT.pull1 + 0.02) || (t > ACT.expand && t < ACT.full + 0.02);
+
+/** Riff for Video — one take in the editor, every edit said (and shown, never heard), then the vertical cut.
+ * The song is mixed by tools/mix.py. */
+export const Film: React.FC = () => {
+	const t = useCurrentFrame() / FPS;
+	if (!moving(t)) return <Scene t={t} />;
+	// running average: layer k at opacity 1/(k+1) weighs every sub-frame equally
+	return (
+		<AbsoluteFill style={{background: '#000'}}>
+			{Array.from({length: BLUR}, (_, k) => (
+				<AbsoluteFill key={k} style={{opacity: 1 / (k + 1)}}>
+					<Scene t={t + ((k + 0.5) / BLUR - 0.5) * (0.5 / FPS)} />
+				</AbsoluteFill>
+			))}
 		</AbsoluteFill>
 	);
 };

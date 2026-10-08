@@ -7,11 +7,8 @@ import {PAD} from './layout';
 // Two fingers scrubbing the trackpad. Natural scrolling: the fingers move with the filmstrip,
 // so sliding left moves the playhead later.
 const WINDOWS: [number, number][] = [
-	[-0.2, 0.7],
-	[4.62, 5.1],
-	[6.05, 6.7],
-	[9.78, 11.45],
-	[11.86, 12.22],
+	[ACT.rew1 + 0.02, ACT.cut - 0.1],
+	[ACT.markIn - 0.72, ACT.markOut],
 ];
 const K = 82; // finger px per timeline second
 
@@ -26,6 +23,8 @@ const fingerAt = (t: number) => {
 	}
 	return null;
 };
+/** between scrubs the fingers rest lightly on the pad */
+const restAt = (t: number) => 0.3 * clamp01((t - ACT.rew1 + 0.3) / 0.3) * (1 - clamp01((t - ACT.expand) / 0.2));
 
 const Finger: React.FC<{x: number; y: number; o: number; s: number; ring: number}> = ({x, y, o, s, ring}) => (
 	<div style={{position: 'absolute', left: x - 36, top: y - 40, width: 72, height: 80, opacity: o, transform: `scale(${s})`}}>
@@ -89,7 +88,7 @@ export const Trackpad: React.FC<{t: number}> = ({t}) => {
 				{press > 0 ? <div style={{position: 'absolute', inset: 0, background: `radial-gradient(circle at ${50 + ((f?.dx ?? 0) / PAD.w) * 100}% 52%, rgba(255,150,100,${0.18 * press}), transparent 45%)`}} /> : null}
 			</div>
 			{trail}
-			{f ? fingers(f.dx, f.on, 1 + 0.18 * (1 - easeOut(clamp01((t - (f.a - 0.12)) / 0.16))) - 0.04 * press, ring) : null}
+			{f ? fingers(f.dx, Math.max(f.on, restAt(t)), 1 + 0.18 * (1 - easeOut(clamp01((t - (f.a - 0.12)) / 0.16))) * f.on - 0.04 * press, ring) : restAt(t) > 0.01 ? fingers(Math.sin(t * 1.3) * 3, restAt(t), 1, 0) : null}
 		</div>
 	);
 };

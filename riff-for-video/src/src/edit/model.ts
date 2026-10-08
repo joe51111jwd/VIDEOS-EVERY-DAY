@@ -58,15 +58,15 @@ const S6pre = replace(S5, 'C', [
 	{id: 'Cb', clip: 'c1128', x: 9.0, dur: 0.5, s: 5.0},
 ]);
 // "Find the shot where she smiles." drops the smile in at T 10.0
-const S7 = [...shift(S6, 10.0, 2), {id: 'M', clip: 'c1213', x: 10.0, dur: 2.0, s: 2.2}].sort((a, b) => a.x - b.x);
-// "Cut it to the beat.": every cut lands on a beat, the tail becomes a two-beat montage
+const S7 = [...shift(S6, 10.0, 2), {id: 'M', clip: 'c1213', x: 10.0, dur: 2.0, s: 2.9}].sort((a, b) => a.x - b.x);
+// "Cut it to the beat.": every cut lands on a beat, the tail becomes a two-beat montage (the aerial gets four)
 const q = (x: number) => BEAT0 + Math.round((x - BEAT0) / BEAT) * BEAT;
 const S8 = (() => {
 	const out: Seg[] = [];
 	let x = 0;
 	for (const g of S7) {
 		const tail = g.x >= 12.0;
-		const end = tail ? x + 2 * BEAT : q(g.x + g.dur);
+		const end = tail ? x + (g.id === 'D' ? 4 : 2) * BEAT : q(g.x + g.dur);
 		const dur = Math.max(BEAT, end - x);
 		out.push({...g, x, dur});
 		x += dur;
@@ -74,9 +74,14 @@ const S8 = (() => {
 	return out;
 })();
 
-type Step = {t: number; d: number; to: Seg[]; e?: (x: number) => number};
+/** the aerial in the finished edit: the vertical cut follows its surfer */
+const D8 = S8.find((g) => g.id === 'D')!;
+
+type Step = {t: number; d: number; to: Seg[]; e?: (x: number) => number; exits?: boolean};
 const STEPS: Step[] = [
-	{t: -1, d: 0, to: S0},
+	// the cold open shows the finished edit, then rewinds it to the raw clips
+	{t: -1, d: 0, to: S8},
+	{t: ACT.rew0 + 0.12, d: ACT.rew1 - ACT.rew0 - 0.24, to: S0, e: easeInOut, exits: true},
 	{t: ACT.cut, d: 0, to: S1},
 	{t: ACT.ripple, d: 0.34, to: S2, e: easeInOut},
 	{t: ACT.restore, d: 0.4, to: S3, e: easeOut},
@@ -101,6 +106,7 @@ export const layoutAt = (t: number): LSeg[] => {
 		if (a) out.push({...g, x: lerp(a.x, g.x, p), dur: lerp(a.dur, g.dur, p), y: 0, o: 1});
 		else out.push({...g, y: -46 * (1 - p), o: p});
 	}
+	if (cur.exits && p < 1) for (const h of prev) if (!cur.to.find((g) => g.id === h.id)) out.push({...h, y: -46 * p, o: 1 - p});
 	// "Lose that." — the removed piece lifts off before the gap closes
 	if (t >= ACT.lift && t < ACT.restore) {
 		const c1 = S1.find((g) => g.id === 'C1')!;
@@ -110,21 +116,33 @@ export const layoutAt = (t: number): LSeg[] => {
 	return out.filter((g) => !(g.id === 'C1' && t >= ACT.lift && t < ACT.restore && g.y === 0));
 };
 
+/** v1 (the aerial) starts on this beat of the cold open; the viewer under the pull-back shows the same frame */
+export const OPEN_V1 = BEAT0 + 3 * BEAT;
+export const V1_SRC0 = 3.1; // first source second of public/v/v1
+/** timeline time of aerial source second `src` in the finished edit */
+const onD8 = (src: number) => D8.x + (src - D8.s);
+
 // ---- playhead: timeline seconds under the fixed centre playhead
 type PK = [number, number, 'lin' | 'io' | 'out'];
+const OPEN_T = onD8(V1_SRC0 + ACT.pull1 - OPEN_V1);
+const CROP_T = onD8(V1_SRC0 + 0.3);
 const PH: PK[] = [
-	[0.0, 8.1, 'io'],
-	[0.22, 7.3, 'io'],
-	[0.45, 7.75, 'io'],
-	[0.64, 7.5, 'io'],
+	// paused on the aerial in the finished edit, then whipped back to the start by the rewind
+	[0, OPEN_T, 'io'],
+	[ACT.rew0, OPEN_T, 'io'],
+	[ACT.rew1, 8.1, 'io'],
+	// two-finger scrub to the cut
+	[ACT.rew1 + 0.12, 8.1, 'io'],
+	[ACT.cut - 0.75, 7.3, 'io'],
+	[ACT.cut - 0.42, 7.75, 'io'],
+	[ACT.cut - 0.12, 7.5, 'io'],
 	[ACT.ripple, 7.5, 'io'],
 	[ACT.ripple + 0.34, 5.5, 'lin'],
+	// "Play that back." whips back and plays through the undo and the trim
 	[ACT.rewind, 5.5 + (ACT.rewind - ACT.ripple - 0.34), 'out'],
 	[ACT.rewind + 0.28, 4.55, 'lin'],
-	[ACT.toCut, 4.55 + (ACT.toCut - ACT.rewind - 0.28), 'io'],
-	[ACT.toCut + 0.45, 5.5, 'io'],
-	[ACT.heal + 0.3, 5.5, 'lin'],
-	[9.85, 5.5 + (9.85 - ACT.heal - 0.3), 'io'],
+	[ACT.markIn - 0.7, 4.55 + (ACT.markIn - 0.7 - ACT.rewind - 0.28), 'io'],
+	// scrub to "here", then on to "there"
 	[ACT.markIn, 8.0, 'io'],
 	[ACT.markOut - 0.05, 9.0, 'io'],
 	[ACT.whip, 9.0, 'out'],
@@ -133,7 +151,10 @@ const PH: PK[] = [
 	[ACT.colorClose, 9.85, 'lin'],
 	[ACT.browserOpen, 10.0, 'io'],
 	[ACT.insert + 0.3, 10.0, 'lin'],
-	[40, 10.0 + (40 - ACT.insert - 0.3), 'lin'],
+	// "Make it vertical." scrolls to the aerial and plays it under the crop box
+	[ACT.crop, 10.0 + (ACT.crop - ACT.insert - 0.3), 'out'],
+	[ACT.crop + 0.3, CROP_T, 'lin'],
+	[60, CROP_T + (60 - ACT.crop - 0.3), 'lin'],
 ];
 export const playheadAt = (t: number) => {
 	if (t <= PH[0][0]) return PH[0][1];
@@ -164,6 +185,11 @@ export const frameAt = (segs: LSeg[], T: number): {clip: string; idx: number; se
 
 // ---- looks: flat → moody (wipe) → deep teal → 60%
 export const lookAt = (t: number) => {
+	if (t < ACT.rew1) {
+		// the finished look, drained back to log by the rewind
+		const p = easeInOut(clamp01((t - ACT.rew0) / (ACT.rew1 - ACT.rew0)));
+		return {wipe: 1 - p, teal: 0.6 * (1 - p), intensity: 60};
+	}
 	const wipe = clamp01((t - ACT.grade) / 0.5);
 	let teal = easeInOut(clamp01((t - ACT.teal) / 0.6));
 	teal = lerp(teal, 0.6, easeInOut(clamp01((t - ACT.less) / 0.45)));
@@ -171,3 +197,11 @@ export const lookAt = (t: number) => {
 };
 
 export const pad4 = (n: number) => String(n).padStart(4, '0');
+
+/** aerial source second shown under the 9:16 box: the cold open (pulled back from v1), then the crop */
+export const v1Src = (t: number) => (t < ACT.crop ? V1_SRC0 + (Math.min(Math.max(t, OPEN_V1), ACT.pull1) - OPEN_V1) : V1_SRC0 + (t - ACT.crop));
+/** what the viewer shows: the aerial during the cold open and the crop, else the frame under the playhead */
+export const viewFrame = (t: number): {clip: string; idx: number; seg?: LSeg} => {
+	if (t < ACT.rew0 || t >= ACT.crop) return {clip: 'c1076', idx: Math.round((v1Src(t) - CLIPS.c1076.a) * 30) + 1};
+	return frameAt(layoutAt(t), playheadAt(t));
+};
