@@ -1,0 +1,71 @@
+{
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/sites/restaurant/",
+ "duration": 4.0,
+ "warmup": {
+  "ms": 3000,
+  "until": "!!document.querySelector('.arrival-gl.is-ready')",
+  "untilMs": 120000,
+  "afterMs": 1000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 1.0,
+   "y": 0
+  },
+  {
+   "t": 1.017,
+   "y": 5638,
+   "ease": "linear"
+  },
+  {
+   "t": 1.4,
+   "y": 5638
+  },
+  {
+   "t": 1.75,
+   "y": 6180
+  },
+  {
+   "t": 2.05,
+   "y": 6180
+  },
+  {
+   "t": 2.4,
+   "y": 7264
+  },
+  {
+   "t": 2.75,
+   "y": 7264
+  },
+  {
+   "t": 3.1,
+   "y": 7806
+  },
+  {
+   "t": 3.3,
+   "y": 7806
+  },
+  {
+   "t": 3.65,
+   "y": 8349
+  },
+  {
+   "t": 4.0,
+   "y": 8349
+  }
+ ],
+ "name": "o-gleid",
+ "out": "/home/user/work/cap/op/o-gleid.mp4"
+}

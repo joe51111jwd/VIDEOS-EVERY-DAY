@@ -1,0 +1,83 @@
+{
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/sites/aether/",
+ "duration": 10.8,
+ "warmup": {
+  "ms": 2000,
+  "stopWhen": "!document.querySelector('.pl-sil') && !document.querySelector('.pl-fill')",
+  "stopMs": 240000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 1.6,
+   "y": 0
+  },
+  {
+   "t": 2.6,
+   "y": 1737
+  },
+  {
+   "t": 3.3,
+   "y": 1737
+  },
+  {
+   "t": 4.1,
+   "y": 2895
+  },
+  {
+   "t": 4.6,
+   "y": 2895
+  },
+  {
+   "t": 5.4,
+   "y": 4136
+  },
+  {
+   "t": 5.9,
+   "y": 4136
+  },
+  {
+   "t": 6.7,
+   "y": 4963
+  },
+  {
+   "t": 7.6,
+   "y": 5790
+  },
+  {
+   "t": 8.2,
+   "y": 5790
+  },
+  {
+   "t": 9.0,
+   "y": 7445
+  },
+  {
+   "t": 10.8,
+   "y": 7445
+  }
+ ],
+ "events": [
+  {
+   "t": 9.6,
+   "js": "document.querySelectorAll('.ed-btn')[1]?.click()"
+  },
+  {
+   "t": 10.2,
+   "js": "document.querySelectorAll('.ed-btn')[2]?.click()"
+  }
+ ],
+ "name": "o-aether",
+ "out": "/home/user/work/cap/op/o-aether.mp4"
+}

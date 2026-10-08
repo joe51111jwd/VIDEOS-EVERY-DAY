@@ -51,8 +51,12 @@ const ctx = await browser.newContext({
 });
 const cfg = { gpu: spec.gpu === false ? null : (spec.gpu || 'ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Pro, Unspecified Version)'), seekTimeout: 6000 };
 await ctx.addInitScript({ content: `window.__VT_CFG=${JSON.stringify(cfg)};\n${shim}` });
+// optional: page code to run before any page script, and a stop condition armed from the very first tick
+if (spec.initJs) await ctx.addInitScript({ content: spec.initJs });
+if (spec.warmup?.earlyStop) await ctx.addInitScript({ content: `window.__vt.stopWhen = new Function(${JSON.stringify('return (' + spec.warmup.earlyStop + ')')});` });
 if (spec.routes) {
-  for (const r of spec.routes) await ctx.route(new RegExp(r.match), (route) => route.fulfill({ path: r.file, contentType: r.type || 'video/webm' }));
+  // r.url: hand the request to another server (keeps Range requests, so media can seek); r.file: serve a file whole
+  for (const r of spec.routes) await ctx.route(new RegExp(r.match), (route) => (r.url ? route.continue({ url: r.url }) : route.fulfill({ path: r.file, contentType: r.type || 'video/webm' })));
 }
 const page = await ctx.newPage();
 page.on('console', (m) => { if (m.type() === 'error' && !spec.quiet) console.log('[page]', m.text().slice(0, 240)); });
@@ -68,6 +72,13 @@ if (spec.warmup?.until) {
   while (Date.now() < lim && !(await page.evaluate(spec.warmup.until))) await page.waitForTimeout(500);
 }
 if (spec.warmup?.afterMs) await page.waitForTimeout(spec.warmup.afterMs);
+if (spec.warmup?.earlyStop) {
+  const lim = Date.now() + (spec.warmup.stopMs || 240000);
+  while (Date.now() < lim && !(await page.evaluate(() => window.__vt.stopped))) await page.waitForTimeout(100);
+  if (!(await page.evaluate(() => window.__vt.stopped))) console.log('[cap] earlyStop never hit; stopping anyway');
+  else console.log('[cap] earlyStop hit at vt', await page.evaluate(() => window.__vt.now.toFixed(0)));
+  if (spec.warmup.settleMs) await page.waitForTimeout(spec.warmup.settleMs);
+}
 if (spec.warmup?.stopWhen) {
   await page.evaluate((src) => { window.__vt.stopWhen = new Function('return (' + src + ')'); }, spec.warmup.stopWhen);
   const lim = Date.now() + (spec.warmup.stopMs || 240000);

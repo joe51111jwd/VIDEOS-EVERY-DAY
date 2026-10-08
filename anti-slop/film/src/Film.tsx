@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, staticFile} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {Claim} from './Claim';
 import {Clip, type ClipSpec} from './Clip';
 import {End, type EndTile} from './End';
@@ -13,6 +13,14 @@ export type Cut = ClipSpec & {
   at: number; // beat index where the clip starts
   beats: number; // length in beats
   tag?: {n: string; title: string; note?: string; inBeat?: number; outBeat?: number};
+  flash?: number; // a white flash on the cut (0-1), for the big hits
+};
+
+/** A flash of light on a hard cut: full white for a frame, gone in five. */
+const Flash: React.FC<{k: number}> = ({k}) => {
+  const f = useCurrentFrame();
+  const o = k * Math.max(0, 1 - f / 5);
+  return o > 0 ? <AbsoluteFill style={{background: C.paper, opacity: o, mixBlendMode: 'screen'}} /> : null;
 };
 
 export type Episode = {
@@ -21,9 +29,10 @@ export type Episode = {
   url: string;
   beatSec: number; // seconds per beat
   t0: number; // film seconds of beat 0
-  slop: {src: string; from: number};
-  strikeBeat: number;
-  leaveBeat: number;
+  slop?: {src: string; from: number}; // the cold open on a parody AI site (episodes); the opener starts on the portfolio instead
+  strikeBeat?: number;
+  leaveBeat?: number;
+  tags?: {n: string; title: string; note?: string; from: number; to: number}[]; // chapter tags spanning several cuts (beats)
   cuts: Cut[];
   end: {atBeat: number; tiles: EndTile[]; stepBeats: number; markBeat: number};
   stops?: {from: number; to: number; lead: string; word: string}[]; // song stops, film seconds: the picture holds, a claim slams in
@@ -46,6 +55,7 @@ export const Film: React.FC<{ep: Episode}> = ({ep}) => {
         return (
           <Sequence key={c.id} from={from} durationInFrames={dur} name={c.id}>
             <Clip c={cc} durF={dur} />
+            {c.flash ? <Flash k={c.flash} /> : null}
             {c.tag ? (
               <Tag
                 n={c.tag.n}
@@ -67,9 +77,20 @@ export const Film: React.FC<{ep: Episode}> = ({ep}) => {
           </Sequence>
         );
       })}
-      <Sequence from={0} durationInFrames={bf(ep.leaveBeat) + 40} name="hook">
-        <Hook slopSrc={ep.slop.src} slopFrom={ep.slop.from} strikeF={bf(ep.strikeBeat)} leaveF={bf(ep.leaveBeat)} />
-      </Sequence>
+      {(ep.tags ?? []).map((t) => {
+        const a = bf(t.from);
+        const d = bf(t.to) - a;
+        return (
+          <Sequence key={`tag${t.n}`} from={a} durationInFrames={d + 10} name={`tag-${t.title}`}>
+            <Tag n={t.n} title={t.title} note={t.note} inF={0} outF={d} />
+          </Sequence>
+        );
+      })}
+      {ep.slop ? (
+        <Sequence from={0} durationInFrames={bf(ep.leaveBeat ?? 3) + 40} name="hook">
+          <Hook slopSrc={ep.slop.src} slopFrom={ep.slop.from} strikeF={bf(ep.strikeBeat ?? 0)} leaveF={bf(ep.leaveBeat ?? 3)} />
+        </Sequence>
+      ) : null}
       <Sequence from={bf(ep.end.atBeat)} name="end">
         <End
           tiles={ep.end.tiles}

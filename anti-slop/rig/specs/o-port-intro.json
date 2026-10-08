@@ -1,0 +1,40 @@
+{
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/",
+ "duration": 7.5,
+ "routes": [
+  {
+   "match": "media/nightline\\.mp4",
+   "url": "http://localhost:4181/nightline.mp4"
+  },
+  {
+   "match": "media/riverstair\\.mp4",
+   "url": "http://localhost:4181/riverstair.mp4"
+  },
+  {
+   "match": "media/octopus\\.mp4",
+   "url": "http://localhost:4181/octopus.mp4"
+  },
+  {
+   "match": "media/riff\\.mp4",
+   "url": "http://localhost:4181/riff.mp4"
+  },
+  {
+   "match": "media/certifier\\.mp4",
+   "url": "http://localhost:4181/certifier.mp4"
+  }
+ ],
+ "warmup": {
+  "earlyStop": "!!document.querySelector('.intro-word')",
+  "ms": 4000
+ },
+ "name": "o-port-intro",
+ "out": "/home/user/work/cap/op/o-port-intro.mp4"
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import {Composition} from 'remotion';
 import {Film} from './Film';
 import {perihelion} from './ep/perihelion';
+import {opener} from './ep/opener';
 
 export const Root: React.FC = () => (
   <>
@@ -13,6 +14,15 @@ export const Root: React.FC = () => (
       fps={60}
       durationInFrames={Math.round(perihelion.durationSec * 60)}
       defaultProps={{ep: perihelion}}
+    />
+    <Composition
+      id="OP"
+      component={Film}
+      width={1080}
+      height={1920}
+      fps={60}
+      durationInFrames={Math.round(opener.durationSec * 60)}
+      defaultProps={{ep: opener}}
     />
   </>
 );

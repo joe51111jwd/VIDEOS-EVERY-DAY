@@ -1,0 +1,38 @@
+{
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/sites/solarpunk/?intro",
+ "duration": 11.4,
+ "warmup": {
+  "earlyStop": "document.documentElement.classList.contains('rs-intro-playing')",
+  "ms": 300
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 7.6,
+   "y": 0
+  },
+  {
+   "t": 10.4,
+   "y": 1229,
+   "ease": "io2"
+  },
+  {
+   "t": 11.4,
+   "y": 1500,
+   "ease": "out"
+  }
+ ],
+ "name": "o-river",
+ "out": "/home/user/work/cap/op/o-river.mp4"
+}

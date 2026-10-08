@@ -17,6 +17,13 @@ export type ClipSpec = {
   meta?: string; // wide layout: mono line above the title
   punch?: boolean;
   freezeAt?: number; // local frame from which the picture holds (a song stop)
+  mask?: [number, number, number, number]; // full layout: keep only this rect of the source frame [x0, y0, x1, y1] px (e.g. a laptop's screen), black around it
+};
+
+// the transform-origin string ('50% 52%') as px in the 1080x1920 frame
+const originPx = (o: string | undefined): [number, number] => {
+  const [a, b] = (o ?? '50% 50%').split(' ').map((v) => parseFloat(v) / 100);
+  return [a * 1080, b * 1920];
 };
 
 const ease = Easing.bezier(0.33, 0, 0.2, 1);
@@ -41,8 +48,16 @@ export const Clip: React.FC<{c: ClipSpec; durF: number}> = ({c, durF}) => {
   );
   const video = frozen ? <Freeze frame={c.freezeAt!}>{raw}</Freeze> : raw;
   if (c.layout === 'full') {
+    let clip: string | undefined;
+    if (c.mask) {
+      const [ox, oy] = originPx(c.origin);
+      const X = (x: number) => ox + (x - ox) * s;
+      const Y = (y: number) => oy + (y - oy) * s + ty;
+      const z = (v: number) => Math.max(0, v);
+      clip = `inset(${z(Y(c.mask[1]))}px ${z(1080 - X(c.mask[2]))}px ${z(1920 - Y(c.mask[3]))}px ${z(X(c.mask[0]))}px round 10px)`;
+    }
     return (
-      <AbsoluteFill style={{background: C.black, overflow: 'hidden'}}>
+      <AbsoluteFill style={{background: C.black, overflow: 'hidden', clipPath: clip}}>
         <AbsoluteFill style={{transform: `translateY(${ty}px) scale(${s})`, transformOrigin: c.origin ?? '50% 50%', filter: frozen ? 'grayscale(0.85) brightness(0.7)' : undefined}}>{video}</AbsoluteFill>
       </AbsoluteFill>
     );
