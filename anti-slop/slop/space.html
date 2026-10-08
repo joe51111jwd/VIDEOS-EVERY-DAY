@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stellaris AI</title>
+<style>
+@font-face{font-family:Inter;src:url(/fonts/Inter-normal-var.woff2) format('woff2');font-weight:100 900}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0620;min-height:100vh;overflow:hidden}
+.bg{position:fixed;inset:0;background:radial-gradient(120% 80% at 50% 0%,#3b1d8f 0%,#1a0f4d 45%,#0b0620 100%)}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.75;animation:float 6s ease-in-out infinite alternate}
+.b1{width:340px;height:340px;background:#8b5cf6;top:-60px;left:-80px}
+.b2{width:300px;height:300px;background:#3b82f6;top:180px;right:-90px;animation-delay:-2s}
+.b3{width:260px;height:260px;background:#ec4899;bottom:40px;left:20%;animation-delay:-4s;opacity:.45}
+@keyframes float{to{transform:translate(30px,40px) scale(1.12)}}
+nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:22px 22px}
+.logo{display:flex;gap:8px;align-items:center;font-weight:700;font-size:19px}
+.logo i{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#a78bfa,#60a5fa);display:grid;place-items:center;font-style:normal;font-size:15px}
+.menu{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;font-size:18px}
+main{position:relative;padding:34px 24px 0;text-align:center}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(167,139,250,.45);font-size:13px;font-weight:500;color:#ddd6fe}
+h1{margin:22px 0 16px;font-size:42px;line-height:1.08;font-weight:800;letter-spacing:-.02em}
+h1 span{background:linear-gradient(90deg,#c4b5fd,#93c5fd,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+p.sub{font-size:16.5px;line-height:1.55;color:#c7c3e6;max-width:520px;margin:0 auto}
+.ctas{display:flex;flex-direction:column;gap:12px;margin:28px auto 0;max-width:340px}
+.btn{padding:16px 22px;border-radius:14px;font-weight:600;font-size:16px}
+.primary{background:linear-gradient(90deg,#7c3aed,#3b82f6);box-shadow:0 10px 40px rgba(124,58,237,.55)}
+.ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18)}
+.trust{margin-top:26px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13.5px;color:#c7c3e6}
+.av{display:flex}.av b{width:28px;height:28px;border-radius:50%;border:2px solid #1a0f4d;margin-left:-8px;background:linear-gradient(135deg,#f9a8d4,#a78bfa)}
+.av b:nth-child(2){background:linear-gradient(135deg,#93c5fd,#6366f1)}.av b:nth-child(3){background:linear-gradient(135deg,#fde68a,#f472b6)}
+.cards{position:relative;display:grid;gap:14px;padding:34px 24px}
+.card{text-align:left;padding:20px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
+.card .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,rgba(139,92,246,.45),rgba(59,130,246,.45));margin-bottom:12px}
+.card h3{font-size:18px;margin-bottom:6px}.card p{font-size:14.5px;color:#c7c3e6;line-height:1.5}
+@media (min-width:900px){
+  main{padding-top:90px}h1{font-size:76px;max-width:980px;margin:26px auto 20px}p.sub{font-size:20px;max-width:680px}
+  .ctas{flex-direction:row;justify-content:center;max-width:none}.cards{grid-template-columns:repeat(3,1fr);max-width:1180px;margin:0 auto;padding-top:60px}
+  nav{padding:26px 48px}.menu{display:none}.links{display:flex;gap:34px;font-size:15px;color:#d6d3f0}
+}
+@media (max-width:899px){.links{display:none}}
+</style></head><body>
+<div class="bg"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<nav><div class="logo"><i>✦</i>Stellaris AI</div><div class="links"><span>Features</span><span>Pricing</span><span>About</span><span>Contact</span></div><div class="menu">☰</div></nav>
+<main>
+<div class="pill">✨ Powered by next-gen AI</div>
+<h1>Explore the Universe <span>Like Never Before</span> 🚀</h1>
+<p class="sub">Unlock seamless, unforgettable journeys to the stars with our cutting-edge, all-in-one space travel platform.</p>
+<div class="ctas"><div class="btn primary">Get Started →</div><div class="btn ghost">Learn More</div></div>
+<div class="trust"><div class="av"><b></b><b></b><b></b></div>Trusted by 10,000+ explorers ★★★★★</div>
+</main>
+<section class="cards">
+<div class="card"><div class="ic">🚀</div><h3>Lightning-Fast Launches</h3><p>Experience next-level speed with our innovative launch technology.</p></div>
+<div class="card"><div class="ic">🌍</div><h3>Global Reach</h3><p>Seamlessly connect with destinations across the galaxy.</p></div>
+<div class="card"><div class="ic">🔒</div><h3>Safe &amp; Secure</h3><p>Your journey, protected by industry-leading safety.</p></div>
+</section>
+</body></html>

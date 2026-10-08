@@ -1,0 +1,4 @@
+node_modules/
+out/
+# captures are linked in locally (public/cap/<site> -> the capture folder); the episode MP4s are committed next to the README
+public/cap/

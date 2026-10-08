@@ -1,0 +1,31 @@
+{
+ "url": "http://localhost:4173/sites/perihelion/",
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "duration": 5.5,
+ "preroll": 1.5,
+ "warmup": {
+  "ms": 2000,
+  "until": "!document.querySelector('.preloader')",
+  "untilMs": 300000,
+  "afterMs": 5000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 7850
+  },
+  {
+   "t": 5.5,
+   "y": 8700
+  }
+ ],
+ "name": "p-ring",
+ "out": "/home/user/work/cap/peri/p-ring.mp4"
+}

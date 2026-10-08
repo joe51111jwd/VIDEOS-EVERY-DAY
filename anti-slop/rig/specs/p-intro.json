@@ -1,0 +1,33 @@
+{
+ "url": "http://localhost:4173/sites/perihelion/",
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "duration": 8.5,
+ "warmup": {
+  "ms": 0,
+  "stopWhen": "(parseInt(document.querySelector('.boot__pct > span')?.textContent||'0')>=55)"
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 5.0,
+   "y": 0
+  },
+  {
+   "t": 8.5,
+   "y": 330,
+   "ease": "sine"
+  }
+ ],
+ "name": "p-intro",
+ "out": "/home/user/work/cap/peri/p-intro.mp4"
+}

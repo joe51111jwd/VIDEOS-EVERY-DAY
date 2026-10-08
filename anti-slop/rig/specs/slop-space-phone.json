@@ -1,0 +1,3 @@
+{ "name": "slop-space-phone", "url": "http://localhost:4180/space.html", "out": "/home/user/work/cap/slop-space-phone.mp4",
+  "viewport": {"w": 432, "h": 768}, "dpr": 2.5, "mobile": true, "fps": 60, "duration": 2, "gpu": false,
+  "warmup": {"ms": 1500}, "scroll": [{"t":0,"y":0},{"t":2,"y":60,"ease":"sine"}] }

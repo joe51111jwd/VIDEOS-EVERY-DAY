@@ -1,0 +1,57 @@
+{
+ "url": "http://localhost:4173/sites/perihelion/",
+ "viewport": {
+  "w": 432,
+  "h": 768
+ },
+ "dpr": 2.5,
+ "mobile": true,
+ "fps": 60,
+ "quiet": true,
+ "duration": 8,
+ "preroll": 1.5,
+ "warmup": {
+  "ms": 2000,
+  "until": "!document.querySelector('.preloader')",
+  "untilMs": 300000,
+  "afterMs": 5000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 8640
+  },
+  {
+   "t": 2.0,
+   "y": 9000
+  },
+  {
+   "t": 4.4,
+   "y": 9000
+  },
+  {
+   "t": 5.4,
+   "y": 9330
+  },
+  {
+   "t": 8,
+   "y": 9330
+  }
+ ],
+ "events": [
+  {
+   "t": 2.3,
+   "js": "document.querySelector('#tab-mars').click()"
+  },
+  {
+   "t": 3.6,
+   "js": "document.querySelector('#tab-saturn').click()"
+  },
+  {
+   "t": 5.8,
+   "js": "document.querySelector('.reserve .btn--sun').click()"
+  }
+ ],
+ "name": "p-board",
+ "out": "/home/user/work/cap/peri/p-board.mp4"
+}
