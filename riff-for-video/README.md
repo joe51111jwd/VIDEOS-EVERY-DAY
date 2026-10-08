@@ -2,12 +2,14 @@
 
 Daily X video for **Riff for Video**: you scrub with two fingers and say the edit, and it lands. No voiceover and no sound effects: the only sound is the song, and the picture tells the story on mute. Every line you say shows up as words in Riff's voice pill, flies into the timeline or the viewer, and the edit happens the moment it lands, on the beat.
 
-Two cuts, one per song, 9:16 1080x1920 at 30 fps:
+**The final: the talk cut** (`riff-for-video-talk.mp4`, N.Y. State of Mind, about 34.7 s, 9:16 1080x1920 at 30 fps). It opens on "No keyboard. Just speak." over the last bar of the groove. The song drops to its drum break and a letterboxed street-court dancer clip is said into shape on the hits: "Make it vertical." (the 16:9 frame fills the phone, following her), "Make it cinematic." (the grade wipes on), "Slow it down." (35%), "Cut it to the beat." The piano slams back in on a New York montage cut to the loop (Times Square, the 6 train, the dancers, the skyline) while a counter runs up edits and stays at 0 keystrokes. The camera then pulls back: the picture was Riff's viewer all along. Two fingers scrub the timeline, "Freeze it here." freezes the kick, "Shake on every kick." drops a shake keyframe on every kick, and "Title it “New York.”" adds the title. The camera dives back in and the finished cut plays, then "50% faster" and Riff: "No keyboard. Just speak." Source: `src/src/talk/` (composition `TALK`), rendered by `tools/render-talk.sh`; footage crops come from `tools/footage/talk.py` (Mixkit New York clips, not committed).
+
+The first concept, "Say it, it lands", has two cuts, one per song, 9:16 1080x1920 at 30 fps:
 
 - **Black Skinhead** (about 30 s): the drums stop as the camera pulls back into Riff and slam back in on "Cut here."; the bass drop lands the push into the vertical cut.
 - **N.Y. State of Mind** (about 31.7 s): starts on the hook, the bass drops out mid-build and comes back on the push-in.
 
-## What it shows
+## What the first concept shows
 
 Cold open: the finished vertical edit plays, the camera pulls back into Riff and rewinds it to the raw clips. Then: cut here · lose that · make it moody · play that back · undo that cut · trim two seconds · slow-mo from here… to there · open color, deep teal, little less · find where she smiles (search by what's in the clip) · cut it to the beat · make it vertical (a 9:16 crop that follows the surfer), and the vertical cut plays full screen. The end card counts up to "50% faster", then Riff: "No keyboard. Just speak."
 
