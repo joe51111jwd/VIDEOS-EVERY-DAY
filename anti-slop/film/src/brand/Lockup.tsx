@@ -27,7 +27,7 @@ export const Lockup: React.FC<{
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', ...style}}>
       <div style={{display: 'flex', alignItems: 'center'}}>
-        <div style={{maxWidth: `${(a * 3.7).toFixed(4)}em`, overflow: 'hidden', fontSize: size, display: 'flex', justifyContent: 'flex-end'}}>
+        <div style={{maxWidth: `${(a * 4.6).toFixed(4)}em`, overflow: 'hidden', fontSize: size, display: 'flex', justifyContent: 'flex-end'}}>
           <div style={{display: 'flex', alignItems: 'center', flexShrink: 0}}>
             <span style={word}>ANTI</span>
             <span style={{display: 'block', width: size * 0.62, height: size * 0.13, background: C.strike, margin: `0 ${size * 0.1}px`, transform: `translateY(${size * 0.02}px)`}} />

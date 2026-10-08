@@ -14,6 +14,23 @@ export type Cut = ClipSpec & {
   beats: number; // length in beats
   tag?: {n: string; title: string; note?: string; inBeat?: number; outBeat?: number};
   flash?: number; // a white flash on the cut (0-1), for the big hits
+  trans?: {type: 'fade' | 'white' | 'black'; beats: number}; // how this cut arrives: a crossfade over the previous one, or a dip through white/black centred on the cut
+  bumps?: number[]; // beats (absolute) where a long shot kicks with the stomp
+};
+
+/** A dip through white or black, centred on a cut: up over the first half, down over the second. */
+const Dip: React.FC<{color: string; durF: number}> = ({color, durF}) => {
+  const f = useCurrentFrame();
+  const h = durF / 2;
+  const o = f < h ? f / h : Math.max(0, 1 - (f - h) / h);
+  return <AbsoluteFill style={{background: color, opacity: Math.pow(o, 0.8)}} />;
+};
+
+/** Crossfade in: the incoming shot fades up over the outgoing one. */
+const FadeIn: React.FC<{durF: number; children: React.ReactNode}> = ({durF, children}) => {
+  const f = useCurrentFrame();
+  const o = Math.min(1, f / Math.max(1, durF));
+  return <AbsoluteFill style={{opacity: o * o * (3 - 2 * o)}}>{children}</AbsoluteFill>;
 };
 
 /** A flash of light on a hard cut: full white for a frame, gone in five. */
@@ -32,7 +49,8 @@ export type Episode = {
   slop?: {src: string; from: number}; // the cold open on a parody AI site (episodes); the opener starts on the portfolio instead
   strikeBeat?: number;
   leaveBeat?: number;
-  tags?: {n: string; title: string; note?: string; from: number; to: number}[]; // chapter tags spanning several cuts (beats)
+  tags?: {n: string; title: string; note?: string; from: number; to: number; corner?: 'bl' | 'br' | 'tl' | 'tr'}[]; // chapter tags spanning several cuts (beats)
+  compactTags?: boolean; // a slate that hugs its text instead of a full-width band (landscape)
   cuts: Cut[];
   end: {atBeat: number; tiles: EndTile[]; stepBeats: number; markBeat: number};
   stops?: {from: number; to: number; lead: string; word: string}[]; // song stops, film seconds: the picture holds, a claim slams in
@@ -47,14 +65,20 @@ export const Film: React.FC<{ep: Episode}> = ({ep}) => {
   return (
     <AbsoluteFill style={{background: C.black}}>
       {ep.cuts.map((c) => {
-        const from = bf(c.at);
+        const cutF = bf(c.at);
+        // a crossfade starts the shot early, under the end of the previous one
+        const ov = c.trans?.type === 'fade' ? Math.round(c.trans.beats * ep.beatSec * fps) : 0;
+        const from = cutF - ov;
         const dur = bf(c.at + c.beats) - from;
+        const bumped = c.bumps ? {...c, bumpF: c.bumps.map((b) => bf(b) - from)} : c;
+        const src = ov ? {...bumped, from: Math.max(0, c.from - (ov / fps) * (c.speed ?? 1))} : bumped;
         // a stop that starts inside this cut freezes its picture from there on
         const stop = (ep.stops ?? []).find((s) => Math.round(s.from * fps) >= from && Math.round(s.from * fps) < from + dur);
-        const cc = stop ? {...c, freezeAt: Math.round(stop.from * fps) - from} : c;
+        const cc = stop ? {...src, freezeAt: Math.round(stop.from * fps) - from} : src;
+        const clip = <Clip c={cc} durF={dur} />;
         return (
           <Sequence key={c.id} from={from} durationInFrames={dur} name={c.id}>
-            <Clip c={cc} durF={dur} />
+            {ov ? <FadeIn durF={ov}>{clip}</FadeIn> : clip}
             {c.flash ? <Flash k={c.flash} /> : null}
             {c.tag ? (
               <Tag
@@ -65,6 +89,14 @@ export const Film: React.FC<{ep: Episode}> = ({ep}) => {
                 outF={bf(c.at + (c.tag.outBeat ?? c.beats - 0.5)) - from}
               />
             ) : null}
+          </Sequence>
+        );
+      })}
+      {ep.cuts.filter((c) => c.trans && c.trans.type !== 'fade').map((c) => {
+        const d = Math.round(c.trans!.beats * ep.beatSec * fps);
+        return (
+          <Sequence key={`dip-${c.id}`} from={bf(c.at) - Math.round(d / 2)} durationInFrames={d} name={`dip-${c.id}`}>
+            <Dip color={c.trans!.type === 'white' ? C.paper : C.black} durF={d} />
           </Sequence>
         );
       })}
@@ -82,7 +114,7 @@ export const Film: React.FC<{ep: Episode}> = ({ep}) => {
         const d = bf(t.to) - a;
         return (
           <Sequence key={`tag${t.n}`} from={a} durationInFrames={d + 10} name={`tag-${t.title}`}>
-            <Tag n={t.n} title={t.title} note={t.note} inF={0} outF={d} />
+            <Tag n={t.n} title={t.title} note={t.note} inF={0} outF={d} compact={ep.compactTags} corner={t.corner} />
           </Sequence>
         );
       })}

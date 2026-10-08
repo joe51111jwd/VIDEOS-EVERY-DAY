@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Easing, interpolate, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {C, F} from './brand/tokens';
 
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
@@ -11,7 +11,8 @@ const out3 = Easing.bezier(0.16, 1, 0.3, 1);
  */
 export const Claim: React.FC<{lead: string; word: string; durF: number}> = ({lead, word, durF}) => {
   const f = useCurrentFrame();
-  const size = Math.min(230, 960 / (word.length * 0.84));
+  const {width: W, height: H} = useVideoConfig();
+  const size = Math.min(H * 0.12, (W * 0.89) / (word.length * 0.84));
   const inn = interpolate(f, [0, 5], [0, 1], {...clamp, easing: out3});
   const kick = interpolate(f, [0, 2, 10], [1.08, 1.1, 1], clamp);
   const out = interpolate(f, [durF - 3, durF], [1, 0], clamp);
@@ -21,7 +22,7 @@ export const Claim: React.FC<{lead: string; word: string; durF: number}> = ({lea
       {f < 2 ? <AbsoluteFill style={{background: C.paper, opacity: 0.14}} /> : null}
       <div
         style={{
-          position: 'absolute', left: 0, top: 1090, width: 1080, height: 14, background: C.strike,
+          position: 'absolute', left: 0, top: H * 0.5 + size * 0.62, width: W, height: Math.round(size * 0.07), background: C.strike,
           transformOrigin: 'left center',
           transform: `scaleX(${interpolate(f, [0, 4], [0, 1], {...clamp, easing: out3})})`,
           opacity: interpolate(f, [4, 14], [1, 0], clamp) * out,

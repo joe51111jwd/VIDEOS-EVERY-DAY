@@ -1,0 +1,66 @@
+{
+ "viewport": {
+  "w": 1440,
+  "h": 810
+ },
+ "dpr": 2,
+ "mobile": false,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/",
+ "duration": 5.0,
+ "routes": [
+  {
+   "match": "media/nightline\\.mp4",
+   "url": "http://localhost:4181/nightline.mp4"
+  },
+  {
+   "match": "media/riverstair\\.mp4",
+   "url": "http://localhost:4181/riverstair.mp4"
+  },
+  {
+   "match": "media/octopus\\.mp4",
+   "url": "http://localhost:4181/octopus.mp4"
+  },
+  {
+   "match": "media/riff\\.mp4",
+   "url": "http://localhost:4181/riff.mp4"
+  },
+  {
+   "match": "media/certifier\\.mp4",
+   "url": "http://localhost:4181/certifier.mp4"
+  }
+ ],
+ "initJs": "try{sessionStorage.setItem('jc-intro-seen','1')}catch(e){}",
+ "warmup": {
+  "ms": 4000,
+  "afterMs": 2500
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 1000
+  },
+  {
+   "t": 0.4,
+   "y": 1000
+  },
+  {
+   "t": 2.2,
+   "y": 1880,
+   "ease": "io2"
+  },
+  {
+   "t": 5.0,
+   "y": 1880
+  }
+ ],
+ "events": [
+  {
+   "t": 2.2,
+   "js": "(()=>{const v=[...document.querySelectorAll('video')].find(v=>/nightline/.test(v.currentSrc||v.src));if(v)v.currentTime=3.0;return !!v})()"
+  }
+ ],
+ "name": "l-port-show",
+ "out": "/home/user/work/cap/l/l-port-show.mp4"
+}

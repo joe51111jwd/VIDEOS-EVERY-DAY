@@ -1,0 +1,59 @@
+{
+ "viewport": {
+  "w": 1440,
+  "h": 810
+ },
+ "dpr": 1.3333333333333333,
+ "mobile": false,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/",
+ "duration": 7.0,
+ "routes": [
+  {
+   "match": "media/nightline\\.mp4",
+   "url": "http://localhost:4181/nightline.mp4"
+  },
+  {
+   "match": "media/riverstair\\.mp4",
+   "url": "http://localhost:4181/riverstair.mp4"
+  },
+  {
+   "match": "media/octopus\\.mp4",
+   "url": "http://localhost:4181/octopus.mp4"
+  },
+  {
+   "match": "media/riff\\.mp4",
+   "url": "http://localhost:4181/riff.mp4"
+  },
+  {
+   "match": "media/certifier\\.mp4",
+   "url": "http://localhost:4181/certifier.mp4"
+  }
+ ],
+ "warmup": {
+  "earlyStop": "!!document.querySelector('.intro-word')",
+  "ms": 4000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 5.4,
+   "y": 0
+  },
+  {
+   "t": 6.8,
+   "y": 420,
+   "ease": "io2"
+  },
+  {
+   "t": 7.0,
+   "y": 420
+  }
+ ],
+ "name": "l-port-intro",
+ "out": "/home/user/work/cap/l/l-port-intro.mp4"
+}

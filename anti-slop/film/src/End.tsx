@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Easing, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Easing, Img, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Lockup} from './brand/Lockup';
 import {C, F} from './brand/tokens';
 
@@ -21,6 +21,9 @@ export const End: React.FC<{
   url: string;
 }> = ({tiles, stepF, markF, reel, site, url}) => {
   const f = useCurrentFrame();
+  const {width: W, height: H} = useVideoConfig();
+  const tw = W / 3, th = H / 3;
+  const lock = Math.min(124, W * 0.115) * (W > H ? 1.25 : 1);
   const order = [4, 0, 8, 2, 6, 1, 7, 3, 5];
   const dim = interpolate(f, [markF - 6, markF + 10], [0, 0.66], clamp);
   const mark = interpolate(f, [markF, markF + 12], [0, 1], {...clamp, easing: out3});
@@ -36,7 +39,7 @@ export const End: React.FC<{
         const col = i % 3, row = Math.floor(i / 3);
         const drift = interpolate(f, [at, at + 400], [1.12, 1.0], {...clamp, easing: Easing.out(Easing.quad)});
         return (
-          <div key={i} style={{position: 'absolute', left: col * 360, top: row * 640, width: 360, height: 640, overflow: 'hidden', opacity: p}}>
+          <div key={i} style={{position: 'absolute', left: col * tw, top: row * th, width: tw, height: th, overflow: 'hidden', opacity: p}}>
             {typeof t === 'string' ? (
               <Img src={staticFile(t)} style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${drift * (1 + (1 - p) * 0.25)})`}} />
             ) : (
@@ -53,19 +56,19 @@ export const End: React.FC<{
       })}
       {/* hairline grid, like a contact sheet */}
       <AbsoluteFill style={{opacity: interpolate(f, [0, 20], [0, 1], clamp)}}>
-        {[1, 2].map((i) => <div key={`v${i}`} style={{position: 'absolute', left: i * 360 - 2, top: 0, width: 4, height: 1920, background: C.black}} />)}
-        {[1, 2].map((i) => <div key={`h${i}`} style={{position: 'absolute', top: i * 640 - 2, left: 0, height: 4, width: 1080, background: C.black}} />)}
+        {[1, 2].map((i) => <div key={`v${i}`} style={{position: 'absolute', left: i * tw - 2, top: 0, width: 4, height: H, background: C.black}} />)}
+        {[1, 2].map((i) => <div key={`h${i}`} style={{position: 'absolute', top: i * th - 2, left: 0, height: 4, width: W, background: C.black}} />)}
       </AbsoluteFill>
       <AbsoluteFill style={{background: `radial-gradient(70% 45% at 50% 50%, rgba(5,5,5,${dim + 0.2}) 0%, rgba(5,5,5,${dim}) 100%)`}} />
       {mark > 0 ? (
         <AbsoluteFill style={{alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{fontFamily: F.mono, fontSize: 28, letterSpacing: '0.24em', color: C.paper, opacity: meta * 0.85, textTransform: 'uppercase', marginBottom: 56}}>
+          <div style={{fontFamily: F.mono, fontSize: 28, letterSpacing: '0.24em', color: C.paper, opacity: meta * 0.85, textTransform: 'uppercase', marginBottom: W > H ? 40 : 56}}>
             {reel} <span style={{color: C.strike}}>/</span> {site}
           </div>
           <div style={{transform: `scale(${interpolate(mark, [0, 1], [1.25, 1])})`, opacity: mark}}>
-            <Lockup size={124} anti={1} sub={sub} />
+            <Lockup size={lock} anti={1} sub={sub} />
           </div>
-          <div style={{fontFamily: F.mono, fontSize: 30, letterSpacing: '0.2em', color: C.paper, opacity: meta, textTransform: 'uppercase', marginTop: 90}}>{url}</div>
+          <div style={{fontFamily: F.mono, fontSize: 30, letterSpacing: '0.2em', color: C.paper, opacity: meta, textTransform: 'uppercase', marginTop: W > H ? 60 : 90}}>{url}</div>
         </AbsoluteFill>
       ) : null}
     </AbsoluteFill>

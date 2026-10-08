@@ -1,0 +1,79 @@
+{
+ "viewport": {
+  "w": 1440,
+  "h": 810
+ },
+ "dpr": 1.3333333333333333,
+ "mobile": false,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/sites/aether/",
+ "duration": 10.8,
+ "warmup": {
+  "ms": 2000,
+  "stopWhen": "!document.querySelector('.pl-sil') && !document.querySelector('.pl-fill')",
+  "stopMs": 240000
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 1.5,
+   "y": 0
+  },
+  {
+   "t": 2.6,
+   "y": 2484
+  },
+  {
+   "t": 3.2,
+   "y": 2484
+  },
+  {
+   "t": 3.8,
+   "y": 3105
+  },
+  {
+   "t": 4.3,
+   "y": 3105
+  },
+  {
+   "t": 5.0,
+   "y": 4436
+  },
+  {
+   "t": 5.5,
+   "y": 4436
+  },
+  {
+   "t": 6.2,
+   "y": 5324
+  },
+  {
+   "t": 7.0,
+   "y": 6211
+  },
+  {
+   "t": 7.8,
+   "y": 6211
+  },
+  {
+   "t": 8.8,
+   "y": 7986
+  },
+  {
+   "t": 10.8,
+   "y": 7986
+  }
+ ],
+ "events": [
+  {
+   "t": 9.4,
+   "js": "document.querySelectorAll('.ed-btn')[1]?.click()"
+  }
+ ],
+ "name": "l-aether",
+ "out": "/home/user/work/cap/l/l-aether.mp4"
+}

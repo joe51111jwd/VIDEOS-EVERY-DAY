@@ -1,0 +1,38 @@
+{
+ "viewport": {
+  "w": 1440,
+  "h": 810
+ },
+ "dpr": 1.3333333333333333,
+ "mobile": false,
+ "fps": 60,
+ "quiet": true,
+ "url": "http://localhost:4173/sites/solarpunk/?intro",
+ "duration": 13.0,
+ "warmup": {
+  "earlyStop": "document.documentElement.classList.contains('rs-intro-playing')",
+  "ms": 300
+ },
+ "scroll": [
+  {
+   "t": 0,
+   "y": 0
+  },
+  {
+   "t": 8.6,
+   "y": 0
+  },
+  {
+   "t": 12.2,
+   "y": 1700,
+   "ease": "io2"
+  },
+  {
+   "t": 13.0,
+   "y": 1800,
+   "ease": "out"
+  }
+ ],
+ "name": "l-river",
+ "out": "/home/user/work/cap/l/l-river.mp4"
+}
