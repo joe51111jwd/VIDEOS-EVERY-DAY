@@ -9,7 +9,7 @@ Two cuts, one per song, 9:16 1080x1920 at 30 fps:
 
 ## What it shows
 
-Cold open: the finished vertical edit plays, the camera pulls back into Riff and rewinds it to the raw clips. Then: cut here · lose that · make it moody · play that back · undo that cut · trim two seconds · slow-mo from here… to there · open color, deep teal, little less · find where she smiles (search by what's in the clip) · cut it to the beat · make it vertical (a 9:16 crop that follows the surfer), and the vertical cut plays full screen into the end card.
+Cold open: the finished vertical edit plays, the camera pulls back into Riff and rewinds it to the raw clips. Then: cut here · lose that · make it moody · play that back · undo that cut · trim two seconds · slow-mo from here… to there · open color, deep teal, little less · find where she smiles (search by what's in the clip) · cut it to the beat · make it vertical (a 9:16 crop that follows the surfer), and the vertical cut plays full screen. The end card counts up to "50% faster", then Riff: "No keyboard. Just speak."
 
 ## Source (`src/`)
 

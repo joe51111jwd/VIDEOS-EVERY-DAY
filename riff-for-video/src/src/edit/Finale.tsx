@@ -118,34 +118,51 @@ const CropOverlay: React.FC<{t: number}> = ({t}) => {
 
 /** the end card's punch: a big one when the drums slam back in, then a small one on every beat */
 const kick = (t: number) => {
-	if (ACT.slam < 0 || t < ACT.slam) return 0;
+	if (t < ACT.slam) return 0;
 	const big = 1 - easeOut(clamp01((t - ACT.slam) / 0.4));
 	const n = Math.floor((t - ACT.slam) / BEAT);
 	const small = n >= 1 ? 0.3 * (1 - easeOut(clamp01((t - ACT.slam - n * BEAT) / 0.25))) : 0;
 	return Math.max(big, small);
 };
 
+/** the stat counts up when the end card arrives (in Black Skinhead's stop); Riff takes over on the slam */
+const STAT = 50;
 const EndCard: React.FC<{t: number}> = ({t}) => {
 	const a = END_AT;
+	const s = ACT.slam;
 	if (t < a - 0.05) return null;
 	const kk = kick(t);
-	const flash = ACT.slam >= 0 && t >= ACT.slam ? Math.max(0, 1 - (t - ACT.slam) / 0.14) * 0.2 : 0;
-	const bg = step(t, a, 0.45, easeInOut);
-	const icon = step(t, a + 0.08, 0.6);
-	const word = step(t, a + 0.22, 0.6);
-	const line = step(t, a + 0.55, 0.6);
-	const foot = step(t, a + 0.9, 0.6);
+	const flash = t >= s ? Math.max(0, 1 - (t - s) / 0.14) * 0.2 : 0;
+	const bg = step(t, a, 0.35, easeInOut);
+	// "50% faster": the number runs up from 0, hard cut away on the slam
+	const stat = t < s ? step(t, a, 0.45) : 0;
+	const n = Math.round(STAT * easeOut(clamp01((t - a) / 0.55)));
+	const label = step(t, a + 0.3, 0.4);
+	// the brand
+	const icon = step(t, s, 0.5);
+	const word = step(t, s + 0.1, 0.5);
+	const line = step(t, s + 0.3, 0.5);
+	const foot = step(t, s + 0.6, 0.6);
 	return (
 		<div style={{position: 'absolute', inset: 0, zIndex: 95}}>
 			<div style={{position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.66)', opacity: bg}} />
-			<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+			{stat > 0 ? (
+				<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: stat, transform: `scale(${0.92 + 0.08 * stat})`, filter: `blur(${(1 - stat) * 10}px)`}}>
+					<div style={{marginTop: -80, fontFamily: SANS, fontWeight: 720, fontSize: 340, lineHeight: 1, letterSpacing: '-0.06em', color: '#F5F5F7', fontVariantNumeric: 'tabular-nums', textShadow: '0 0 60px rgba(255,255,255,0.18)'}}>
+						{n}
+						<span style={{fontSize: 220, letterSpacing: '-0.04em'}}>%</span>
+					</div>
+					<div style={{marginTop: 10, fontFamily: SANS, fontWeight: 620, fontSize: 110, letterSpacing: '-0.04em', color: C.ember, opacity: label, transform: `translateY(${(1 - label) * 16}px)`}}>faster</div>
+				</div>
+			) : null}
+			<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: t >= s ? 1 : 0}}>
 				<div style={{display: 'flex', alignItems: 'center', gap: 34, marginTop: -60, transform: `scale(${1 + 0.07 * kk})`}}>
 					<div style={{transform: `scale(${0.85 + 0.15 * icon})`, opacity: icon}}>
 						<RiffIcon size={140} level={0.45 + 0.4 * kk} glow={0.35 * icon + 0.5 * kk} />
 					</div>
 					<div style={{fontFamily: SANS, fontWeight: 620, fontSize: 158, letterSpacing: '-0.055em', color: '#F5F5F7', opacity: word, transform: `translateX(${(1 - word) * -24}px)`, filter: `blur(${(1 - word) * 8}px)`}}>Riff</div>
 				</div>
-				<div style={{marginTop: 40, fontFamily: SANS, fontWeight: 560, fontSize: 66, letterSpacing: '-0.03em', color: '#F5F5F7', opacity: line, transform: `translateY(${(1 - line) * 14}px)`}}>Just talk.</div>
+				<div style={{marginTop: 40, fontFamily: SANS, fontWeight: 560, fontSize: 66, letterSpacing: '-0.03em', color: '#F5F5F7', opacity: line, transform: `translateY(${(1 - line) * 14}px)`}}>No keyboard. Just speak.</div>
 				<div style={{position: 'absolute', bottom: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, opacity: foot}}>
 					<div style={{fontFamily: SANS, fontWeight: 560, fontSize: 32, color: '#C9C9CE', letterSpacing: '-0.01em'}}>Video editing by voice</div>
 					<div style={{fontFamily: SANS, fontWeight: 500, fontSize: 26, color: '#8E8E93', letterSpacing: '-0.005em'}}>Coming soon for Mac</div>

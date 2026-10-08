@@ -21,12 +21,12 @@ type Plan = {
 	beat: number;
 	/** second of the instrumental excerpt (tools/song.py) that plays at film 0 */
 	start: number;
-	/** when each event lands, in beats */
+	/** when each event lands, in beats (endCard: the stat comes up; slam: the brand takes over) */
 	at: {
 		pull0: number; pull1: number; rew0: number; rew1: number;
 		cut: number; lose: number; moody: number; back: number; undo: number; trim: number; here: number; there: number;
 		color: number; teal: number; less: number; smile: number; insert: number; beat: number; vertical: number; expand: number;
-		endCard: number; end: number; slam?: number;
+		endCard: number; slam: number; end: number;
 	};
 	/** seconds: the drop, where the camera finishes pushing into the vertical cut */
 	full: number;
@@ -38,7 +38,7 @@ type Plan = {
 
 const PLANS: Record<SongId, Plan> = {
 	// Kanye West, "Black Skinhead": the drums stop under the pull-back and slam back in on "Cut here.";
-	// the bass drop lands the push-in, the end card sits in the stop at bar 56, the drums come back at 60
+	// the bass drop lands the push-in, "50% faster" sits in the stop at bar 56, Riff comes in with the drums at 60
 	skin: {
 		title: 'Black Skinhead',
 		beat: 0.4615,
@@ -71,7 +71,7 @@ const PLANS: Record<SongId, Plan> = {
 			pull0: 4, pull1: 4.96, rew0: 5.75, rew1: 7.5,
 			cut: 9, lose: 10.3, moody: 12, back: 13, undo: 14.3, trim: 16, here: 17, there: 18.3,
 			color: 20, teal: 21, less: 22.3, smile: 24, insert: 25.5, beat: 27, vertical: 29, expand: 31,
-			endCard: 40, slam: 40, end: 44,
+			endCard: 38, slam: 40, end: 44,
 		},
 		full: 22.7,
 		drumsOut: [0.2, 0.3],
@@ -130,7 +130,7 @@ export const ACT = {
 	expand: b(A.expand),
 	full: PLAN.full,
 	endCard: b(A.endCard),
-	slam: A.slam !== undefined ? b(A.slam) : -1,
+	slam: b(A.slam),
 	end: b(A.end),
 };
 
