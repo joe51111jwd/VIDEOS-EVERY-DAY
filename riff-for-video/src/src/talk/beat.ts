@@ -55,13 +55,19 @@ const LINES: [string, string, number][] = [
 	['shake', 'Shake on every kick.', T.shake],
 	['title', 'Title it “New York.”', T.title],
 ];
-/** what you say: the words come in as early as reading needs (the first line is up from frame 0), the edit lands on the hit */
+/** the opening: "No keyboard. Just speak." over the last bar of the groove (beats 116-120), before the film's
+ * time 0, where the song drops to its drum break; the composition starts PRE seconds before film 0 */
+export const PRE = 4 * BEAT;
+/** the first line is said in the opening's last beat, so it is up when the clip appears */
+const FIRST_A = at(119) + 0.26;
+/** what you say: the words come in as early as reading needs, the edit lands on the hit */
 export const LINES_AT: Line[] = LINES.map(([id, text, land], i) => {
 	const words = text.split(' ').length;
 	const want = 0.5 + WORD * (words - 1) + 0.35;
 	const room = i > 0 ? land - LINES[i - 1][2] - 0.22 : land;
-	return {id, text, land, a: i === 0 ? 0 : land - Math.min(want, room)};
+	return {id, text, land, a: i === 0 ? FIRST_A : land - Math.min(want, room)};
 });
 
 export const TAIL = 0.6;
-export const DURATION = T.end + TAIL;
+/** the composition: the opening, then the film to its last hit and the ring-out */
+export const DURATION = PRE + T.end + TAIL;

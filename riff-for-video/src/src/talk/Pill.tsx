@@ -69,7 +69,7 @@ export const Pill: React.FC<{t: number; y: number; show: number}> = ({t, y, show
 	let meter = 1;
 	if (cur) {
 		const c = cur;
-		const grow = c.a === 0 ? 1 : easeInOut(clamp01((t - c.a + 0.12) / 0.2));
+		const grow = easeInOut(clamp01((t - c.a + 0.12) / 0.2));
 		const clear = easeInOut(clamp01((t - c.land - 0.12) / 0.18));
 		w = lerp(lerp(pillW(null), pillW(c), grow), pillW(null), clear);
 		meter = Math.max(1 - grow, clear);
@@ -79,7 +79,7 @@ export const Pill: React.FC<{t: number; y: number; show: number}> = ({t, y, show
 			<div style={{position: 'absolute', left: P.padL + P.av + P.gap, top: 0, height: P.h, display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', fontFamily: SANS, fontWeight: 590, fontSize: P.font, letterSpacing: '-0.015em', color: hot > 0 ? '#FFD2B0' : '#F5F5F7', opacity: 1 - clear, transform: `translateY(${-clear * 14}px)`}}>
 				{words.map((wd, k) => {
 					const wt = c.a + k * WORD;
-					const o = c.a === 0 ? 1 : interpolate(t, [wt - 0.04, wt + 0.07], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+					const o = interpolate(t, [wt - 0.04, wt + 0.07], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 					return (
 						<span key={k} style={{opacity: o, whiteSpace: 'pre', display: 'inline-block', transform: `translateY(${(1 - o) * 8}px)`}}>
 							{wd}
