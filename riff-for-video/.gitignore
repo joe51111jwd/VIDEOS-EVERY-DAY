@@ -1,0 +1,9 @@
+# build + render output
+src/node_modules/
+src/out/
+# stock footage frames, sprites and 4K crops (Mixkit license: no standalone redistribution)
+src/public/f/
+src/public/s/
+src/public/v/
+# music: the soundtrack is never committed
+src/public/music/
