@@ -1,0 +1,22 @@
+[
+ {"id":"pg","url":"https://paulgraham.com/ds.html","full":true,"w":1280,"h":800},
+ {"id":"stripe","url":"https://stripe.com/pricing"},
+ {"id":"linear","url":"https://linear.app","dark":true},
+ {"id":"vercel","url":"https://vercel.com","dark":true},
+ {"id":"react","url":"https://react.dev","dark":true},
+ {"id":"tailwind","url":"https://tailwindcss.com","dark":true},
+ {"id":"mdn","url":"https://developer.mozilla.org/en-US/docs/Web/CSS/view-transition-name","dark":true},
+ {"id":"appkit","url":"https://developer.apple.com/documentation/appkit","dark":true},
+ {"id":"hn","url":"https://news.ycombinator.com"},
+ {"id":"wiki","url":"https://en.wikipedia.org/wiki/Undo"},
+ {"id":"raycast","url":"https://www.raycast.com","dark":true},
+ {"id":"reddit","url":"https://www.reddit.com/r/macapps/","dark":true},
+ {"id":"arxiv","url":"https://arxiv.org/abs/1706.03762"},
+ {"id":"verge","url":"https://www.theverge.com","dark":true},
+ {"id":"mbp","url":"https://www.apple.com/macbook-pro/","dark":true},
+ {"id":"anthropic","url":"https://docs.anthropic.com","dark":true},
+ {"id":"posthog","url":"https://posthog.com"},
+ {"id":"shadcn","url":"https://ui.shadcn.com","dark":true},
+ {"id":"gmaps","url":"https://www.google.com/maps/@37.7793,-122.4193,14z","wait":5000},
+ {"id":"yt","url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","wait":5000,"dark":true}
+]

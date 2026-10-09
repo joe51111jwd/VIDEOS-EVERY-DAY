@@ -1,0 +1,7 @@
+node_modules/
+out/
+# third-party captures and photos: rebuilt by tools/capture (not redistributed)
+public/web/
+public/fav/
+public/thumbs/
+public/img/p-*.jpg
