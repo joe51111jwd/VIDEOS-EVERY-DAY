@@ -2,3 +2,5 @@ node_modules/
 out/
 # stock photos: fetched by tools/photos.sh (not redistributed)
 public/img/*.jpg
+# Awwwards screenshots: captured by tools/aw-capture.mjs (third-party sites, not redistributed)
+public/aw/

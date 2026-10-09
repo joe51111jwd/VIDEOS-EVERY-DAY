@@ -20,15 +20,15 @@ export const CUE = {
 };
 export const DURATION = CUE.cut + 0.1;
 
-/** sung word onsets (film s), from word-level transcription of the vocal stem */
+/** sung word onsets (film s): vocal-stem attack times (librosa onsets, backtracked), snapped from the word-level transcription */
 export const W = {
-	ceilings: st(119.7),
-	are: st(120.08),
-	gray: st(120.52),
-	you0: st(120.98),
-	make: st(121.12),
-	them: st(121.42),
-	blue: st(121.76),
+	ceilings: 2.107,
+	are: 2.519,
+	gray: 2.937,
+	you0: 3.408,
+	make: 3.529,
+	them: 3.849,
+	blue: 4.162,
 	ooh1: st(122.38),
 	like1: st(123.62),
 	summer: st(124.12),
@@ -36,12 +36,12 @@ export const W = {
 	cool: st(125.24),
 	lover: st(126.5),
 	ice: st(127.04),
-	// refrain 1
-	r1: {i: st(128.5), like: st(129.4), the: st(129.64), way: st(129.96), you: st(130.22), like2: st(130.54), to: st(130.8), move: st(132.2)},
+	// refrain 1, then "MOVE" alone in the stop
+	r1: {i: 10.902, like: 11.767, the: 12.045, way: 12.394, you: 12.684, like2: 12.98, to: 13.317, move: 14.611},
 	// refrain 2 (ends "to… ooh", no move)
-	r2: {i: st(135.92), like: st(136.4), the: st(136.8), way: st(137.04), you: st(137.34), like2: st(137.68), to: st(137.98), ooh: st(138.34)},
+	r2: {i: 18.425, like: 18.843, the: 19.156, way: 19.574, you: 19.772, like2: 20.149, to: 20.294, ooh: 20.741},
 	// refrain 3
-	r3: {i: st(140.9), like: st(141.16), the: st(141.48), way: st(141.78), you: st(142.04), like2: st(142.32), to: st(142.7), move: st(143.02)},
+	r3: {i: 23.4, like: 23.557, the: 23.829, way: 24.247, you: 24.503, like2: 24.665, to: 25.078, move: 25.397},
 	// refrain 4
-	r4: {i: st(145.42), like: st(145.76), the: st(146.2), way: st(146.48), you: st(146.82), like2: st(147.04), to: st(147.4), move: st(148.92)},
+	r4: {i: 27.818, like: 28.114, the: 28.566, way: 28.92, you: 29.246, like2: 29.559, to: 29.675, move: 31.393},
 };

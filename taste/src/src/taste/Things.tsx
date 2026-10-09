@@ -2,7 +2,7 @@ import React from 'react';
 import {Img, staticFile} from 'remotion';
 import {DISPLAY, SANS, SERIF, T, TIGHT, clamp01, easeOut} from '../lib/tokens';
 import {HOTFILL} from '../lib/Type';
-import {Gene, SH, SW, Site} from './Site';
+import {Card, Gene, SH, SW, Site} from './Site';
 import {Icon} from './Brand';
 
 const photo = (k: string) => staticFile(`img/${k}.jpg`);
@@ -10,7 +10,7 @@ const grade = 'sepia(0.22) saturate(0.88) contrast(1.06)';
 const Grain: React.FC<{o?: number}> = ({o = 0.3}) => <div style={{position: 'absolute', inset: 0, backgroundImage: `url(${staticFile('img/grain.png')})`, backgroundSize: '320px 320px', opacity: o, mixBlendMode: 'overlay'}} />;
 
 /** a design at width w */
-export const Shot: React.FC<{g: Gene; w: number; r?: number}> = ({g, w, r = 0}) => (
+export const Shot: React.FC<{g: Card; w: number; r?: number}> = ({g, w, r = 0}) => (
 	<div style={{position: 'relative', width: w, height: (w * SH) / SW, overflow: 'hidden', borderRadius: r}}>
 		<div style={{transform: `scale(${w / SW})`, transformOrigin: '0 0'}}>
 			<Site g={g} />
@@ -110,11 +110,11 @@ export const Phone: React.FC<{w: number}> = ({w}) => {
 };
 
 /** your taste, as a card you share */
-export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Gene[]}> = ({w, t, t0, thumbs}) => {
+export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Card[]; name?: [string, string]; pal?: string[]; typeNote?: string; stat?: string}> = ({w, t, t0, thumbs, name = ['Warm', 'Editorial'], pal, typeNote = 'Serif italics, tall condensed caps', stat = 'Top 3% editorial'}) => {
 	const k = w / 860;
 	const h = 540 * k;
 	const a = (d: number) => easeOut(clamp01((t - t0 - d) / 0.4));
-	const sw = [T.paper, T.ink, T.terra, T.sand, T.olive];
+	const sw = pal ?? [T.paper, T.ink, T.terra, T.sand, T.olive];
 	return (
 		<div style={{position: 'relative', width: w, height: h, borderRadius: 40 * k, overflow: 'hidden', background: 'linear-gradient(150deg, #1E1B19 0%, #0D0C0B 60%, #151110 100%)', boxShadow: `0 ${60 * k}px ${140 * k}px rgba(0,0,0,0.7), inset 0 0 0 ${1.5 * k}px rgba(255,255,255,0.12)`}}>
 			<div style={{position: 'absolute', right: -160 * k, top: -200 * k, width: 620 * k, height: 620 * k, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,110,60,0.55), rgba(255,45,120,0.18) 60%, rgba(0,0,0,0))', filter: `blur(${20 * k}px)`}} />
@@ -123,7 +123,7 @@ export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Gene
 				<Icon s={54 * k} />
 			</div>
 			<div style={{position: 'absolute', left: 44 * k, top: 92 * k, fontFamily: SERIF, fontSize: 118 * k, lineHeight: 0.9, letterSpacing: '-0.025em', color: '#F4EEE6', opacity: a(0)}}>
-				Warm <i style={{backgroundImage: HOTFILL, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', paddingRight: 8 * k}}>Editorial</i>
+				{name[0]} <i style={{backgroundImage: HOTFILL, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', paddingRight: 8 * k}}>{name[1]}</i>
 			</div>
 			<div style={{position: 'absolute', left: 48 * k, top: 232 * k, display: 'flex', gap: 14 * k}}>
 				{sw.map((c, i) => (
@@ -132,7 +132,7 @@ export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Gene
 				<div style={{marginLeft: 22 * k, display: 'flex', alignItems: 'baseline', gap: 18 * k, opacity: a(0.3), color: '#EDE6DC'}}>
 					<span style={{fontFamily: SERIF, fontSize: 44 * k}}>Aa</span>
 					<span style={{fontFamily: DISPLAY, fontWeight: 800, fontStretch: '62%', fontSize: 44 * k}}>AA</span>
-					<span style={{fontFamily: SANS, fontSize: 14 * k, color: '#9E978F', letterSpacing: '0.02em'}}>Serif italics, tall condensed caps</span>
+					<span style={{fontFamily: SANS, fontSize: 14 * k, color: '#9E978F', letterSpacing: '0.02em'}}>{typeNote}</span>
 				</div>
 			</div>
 			<div style={{position: 'absolute', left: 48 * k, right: 48 * k, top: 318 * k, display: 'flex', gap: 14 * k}}>
@@ -144,7 +144,7 @@ export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Gene
 			</div>
 			<div style={{position: 'absolute', left: 48 * k, right: 44 * k, bottom: 40 * k, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: SANS, fontSize: 16 * k, color: '#A69E95', opacity: a(0.55)}}>
 				<span>
-					Learned from <b style={{color: '#F4EEE6', fontWeight: 600}}>214 likes</b> · Top 3% editorial
+					Learned from <b style={{color: '#F4EEE6', fontWeight: 600}}>214 likes</b> · {stat}
 				</span>
 				<span style={{padding: `${10 * k}px ${22 * k}px`, borderRadius: 999, background: '#F4EEE6', color: '#141210', fontWeight: 600, fontFamily: TIGHT}}>Share</span>
 			</div>
@@ -153,7 +153,7 @@ export const TasteCard: React.FC<{w: number; t: number; t0: number; thumbs: Gene
 };
 
 /** a generic AI app window with whatever it made */
-export const AIWin: React.FC<{w: number; name: string; prompt: string; g: Gene; flip: number; on?: number}> = ({w, name, prompt, g, flip, on = 0}) => {
+export const AIWin: React.FC<{w: number; name: string; prompt: string; g: Card; flip: number; on?: number; gray?: number; shimmer?: number}> = ({w, name, prompt, g, flip, on = 0, gray = 0, shimmer}) => {
 	const k = w / 620;
 	const back = flip > 0.5;
 	const r = 180 * flip;
@@ -175,7 +175,10 @@ export const AIWin: React.FC<{w: number; name: string; prompt: string; g: Gene; 
 			<div style={{position: 'absolute', right: 20 * k, top: 58 * k, maxWidth: 420 * k, padding: `${10 * k}px ${16 * k}px`, borderRadius: 16 * k, background: '#2E2E33', color: '#ECECEF', fontSize: 14 * k}}>{prompt}</div>
 			<div style={{position: 'absolute', left: 20 * k, top: 116 * k, perspective: 1600 * k}}>
 				<div style={{transform: `rotateY(${back ? r - 180 : r}deg)`, borderRadius: 12 * k, overflow: 'hidden', boxShadow: back ? `0 0 0 ${3 * k}px rgba(255,120,70,${Math.min(1, (flip - 0.5) * 3)})` : 'none'}}>
-					<Shot g={g} w={560 * k} r={12 * k} />
+					<div style={{position: 'relative', filter: !back && gray > 0.01 ? `grayscale(${gray}) brightness(${1 - 0.3 * gray}) contrast(${1 - 0.15 * gray})` : undefined}}>
+						<Shot g={g} w={560 * k} r={12 * k} />
+						{shimmer !== undefined && !back ? <div style={{position: 'absolute', inset: 0, borderRadius: 12 * k, background: `linear-gradient(105deg, rgba(255,160,70,0) ${(shimmer - 0.22) * 100}%, rgba(255,110,70,0.75) ${shimmer * 100}%, rgba(255,45,126,0) ${(shimmer + 0.22) * 100}%)`}} /> : null}
+					</div>
 				</div>
 			</div>
 		</div>

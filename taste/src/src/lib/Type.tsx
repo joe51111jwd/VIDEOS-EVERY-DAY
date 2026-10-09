@@ -74,6 +74,8 @@ export type It = {
 	morph?: boolean; // thin → heavy as it lands (default true for wt >= 600)
 };
 export type Row = It[];
+/** words start rising this long before their onset (2 frames at 30 fps) */
+export const LEAD = 0.067;
 export const CAP = 0.72; // Archivo cap height / em
 export const ASC = 0.155; // space above the caps inside a 1.0 line box
 
@@ -88,15 +90,16 @@ export const rowFit = (row: Row, w: number, sp = 0.18) => {
 export const stackH = (rows: Row[], w: number, gap = 0.022) => rows.reduce((a, r) => a + rowFit(r, w).h, 0) + gap * w * (rows.length - 1);
 
 const Item: React.FC<{it: It; t: number; fs: number; w: number; x: number; h: number}> = ({it, t, fs, w, x, h}) => {
-	const k = t - it.at;
+	// lands ON the sung onset: the 2-frame rise starts LEAD before it, so the word is whole when it's heard
+	const k = t - it.at + LEAD;
 	if (k < -0.001) return null;
 	const st = it.st ?? 'condensed';
 	const wt = it.wt ?? 800;
 	const tr = it.tr ?? -0.01;
-	const p = Math.min(1, k / 0.15);
-	const e = 1 - Math.pow(1 - p, 3);
-	const doMorph = it.morph ?? wt >= 600;
-	const m = doMorph ? Math.min(1, k / 0.3) : 1;
+	const p = Math.min(1, k / LEAD);
+	const e = 1 - Math.pow(1 - p, 2);
+	const doMorph = it.morph ?? false;
+	const m = doMorph ? Math.min(1, k / 0.2) : 1;
 	const cw = doMorph ? Math.round(180 + (wt - 180) * (1 - Math.pow(1 - m, 2))) : wt;
 	const sx = cw === wt ? 1 : w / Math.max(1, (measure(it.t, cw, st, tr) * fs) / 100);
 	return (

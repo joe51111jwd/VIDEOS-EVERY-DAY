@@ -1,18 +1,18 @@
 import React from 'react';
-import {AbsoluteFill, staticFile, useCurrentFrame} from 'remotion';
-import {FPS, H, T, TIGHT, W as FW, clamp01, easeIn, easeInOut, easeOut, hash, lerp, pulse, spr} from '../lib/tokens';
-import {HOTFILL, Row, Stack, stackH} from '../lib/Type';
+import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {FPS, H, TIGHT, W as FW, clamp01, easeIn, easeInOut, easeOut, hash, lerp, pulse, spr} from '../lib/tokens';
+import {HOTFILL, LEAD, Row, Stack, stackH} from '../lib/Type';
 import {CUE, W as L, bt} from './beats';
-import {DECK_H, DECK_W, Deck, DeckButtons, Swipe} from '../taste/Deck';
-import {CH, CW, Flip, GAP, GH, GW, Grid, Liked, Tap, cellXY} from '../taste/Grid';
-import {Gene, SH, SW, Site, SiteAt, Taste} from '../taste/Site';
-import {DECK, R2, R3, R4, R5, SLOP, WINNER, WINNER2} from '../taste/genes';
-import {AIWin, Bag, Phone, Poster, TasteCard} from '../taste/Things';
+import {APPS, ASK, DECKC, DROP, HOOK, PAL, TASTE_NAME, WALL} from './cast';
+import {Deck, DeckButtons, Swipe} from '../taste/Deck';
+import {Card, SH, SW, Site, SiteAt} from '../taste/Site';
+import {SLOP} from '../taste/genes';
+import {AIWin, TasteCard} from '../taste/Things';
 import {Icon, Tagline, Wordmark} from '../taste/Brand';
-import {CK, Cursor, cursorAt} from '../mac/Cursor';
+import {Learn, Profile} from '../taste/Profile';
+import {Cursor, cursorAt} from '../mac/Cursor';
 
 // ---------------------------------------------------------------- shared
-const taste = (r: Gene[]) => r.filter((g): g is Taste => g.kind === 'taste');
 const Black: React.FC<{children?: React.ReactNode; spot?: number}> = ({children, spot = 0.07}) => (
 	<AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
 		<AbsoluteFill style={{background: `radial-gradient(ellipse 70% 60% at 50% 38%, rgba(255,255,255,${spot}), rgba(0,0,0,0) 70%)`}} />
@@ -30,180 +30,153 @@ const Centered: React.FC<{rows: Row[]; t: number; w?: number; top?: number; gap?
 	const h = stackH(rows, w, gap);
 	return <Stack rows={rows} t={t} w={w} gap={gap} style={{position: 'absolute', left: (FW - w) / 2, top: top ?? (H - h) / 2, ...style}} />;
 };
-
-// ---------------------------------------------------------------- A · the deck (0 – 2.10)
-const SWIPES: Swipe[] = [
-	{at: CUE.slam, dir: -1},
-	{at: bt(200), dir: -1},
-	{at: bt(201), dir: 1},
-	{at: bt(202), dir: 1},
-];
-const SceneDeck: React.FC<{t: number}> = ({t}) => {
-	const push = 1 + 0.06 * easeInOut(clamp01(t / 2.1));
+/** a design filling the frame (cover) */
+const Full: React.FC<{g: Card; s?: number; ox?: number; oy?: number}> = ({g, s = 1, ox = 0.5, oy = 0.5}) => {
+	const k = Math.max(FW / SW, H / SH) * s;
 	return (
-		<Black spot={0.09}>
-			<div style={{position: 'absolute', left: (FW - DECK_W) / 2, top: 150, transform: `scale(${push})`, transformOrigin: '50% 70%'}}>
-				<Deck t={t} cards={DECK} swipes={SWIPES} />
-			</div>
-			<div style={{position: 'absolute', left: 0, right: 0, top: 150 + DECK_H + 70, display: 'flex', justifyContent: 'center'}}>
-				<DeckButtons t={t} swipes={SWIPES} />
-			</div>
-		</Black>
+		<div style={{position: 'absolute', left: (FW - SW * k) * ox, top: (H - SH * k) * oy, width: SW, height: SH, transform: `scale(${k})`, transformOrigin: '0 0'}}>
+			<Site g={g} />
+		</div>
 	);
 };
-
-// ---------------------------------------------------------------- B/C · gray grid → breeding rounds (2.10 – 10.93)
-const T4 = taste(R4);
-const BASE0: Gene[] = SLOP.map((g, i) => (i === 1 ? T4[0] : i === 7 ? T4[3] : i === 3 ? T4[5] : g));
-const R5X: Gene[] = R5.map((g, i) => (i === 7 ? WINNER : g));
-const dist = (a: number, b: number) => {
-	const p = cellXY(a);
-	const q = cellXY(b);
-	return Math.hypot(p.x - q.x, p.y - q.y) / (CW + GAP);
-};
-/** the nearest taste cell to `o` that isn't in `not` */
-const near = (r: Gene[], o: number, not: number[] = []) =>
-	r
-		.map((g, i) => ({g, i}))
-		.filter(({g, i}) => g.kind === 'taste' && i !== o && !not.includes(i))
-		.sort((a, b) => dist(a.i, o) - dist(b.i, o))[0].i;
-
-const TAPS_B: Tap[] = [
-	{cell: 1, at: L.you0},
-	{cell: 7, at: L.make},
-	{cell: 3, at: L.them},
-];
-const F1: Flip = {at: bt(206), from: BASE0, to: R2, origin: 3};
-const c2a = near(R2, 3);
-const c2b = near(R2, c2a, [3]);
-const F2: Flip = {at: bt(210), from: R2, to: R3, origin: c2b};
-const c3a = near(R3, c2b);
-const c3b = near(R3, c3a, [c2b]);
-const F3: Flip = {at: bt(212), from: R3, to: R4, origin: c3b};
-const c4a = near(R4, c3b);
-const c4b = near(R4, c4a, [c3b]);
-const F4: Flip = {at: bt(214), from: R4, to: R5X, origin: c4b};
-const FLIPS = [F1, F2, F3, F4];
-const TAPS_C: Tap[] = [
-	{cell: c2a, at: 5.35},
-	{cell: c2b, at: 5.85},
-	{cell: c3a, at: 7.08},
-	{cell: c3b, at: 7.42},
-	{cell: c4a, at: 8.28},
-	{cell: c4b, at: 8.62},
-	{cell: 7, at: L.ice},
-];
-const flipMid = (f: Flip, i: number) => f.at + dist(i, f.origin) * 0.045 + 0.21;
-
-// grid framing: B = big, low, under the type; C = framed under the app header
-const GB = {cx: FW / 2, cy: 330 + GH / 2, s: 1};
-const GC = {cx: FW / 2, cy: 585, s: 0.84};
-const cellScreen = (i: number, g = GC) => {
-	const {x, y} = cellXY(i);
-	return {x: g.cx + (x - GW / 2) * g.s, y: g.cy + (y - GH / 2) * g.s, w: CW * g.s, h: CH * g.s};
-};
-const LEARN = [12, 38, 61, 84, 97];
-
-const Header: React.FC<{t: number}> = ({t}) => {
-	const a = easeOut(clamp01((t - F1.at - 0.1) / 0.4));
-	const round = 1 + FLIPS.filter((f) => t >= f.at).length;
-	const last = FLIPS.filter((f) => t >= f.at).pop();
-	const prev = LEARN[round - 2] ?? LEARN[0];
-	const pct = last ? lerp(prev, LEARN[round - 1], easeOut(clamp01((t - last.at) / 0.6))) : LEARN[0];
-	const bump = last ? pulse(t, last.at, 0.05, 0.3) : 0;
+const HEART = 'M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z';
+/** double-tap heart */
+const HeartPop: React.FC<{t: number; at: number; x?: number; y?: number; s?: number}> = ({t, at, x = FW / 2, y = H / 2, s = 260}) => {
+	if (t < at) return null;
+	const a = spr(t, at, 20, 0.45);
+	const o = 1 - clamp01((t - at - 0.38) / 0.18);
+	if (o <= 0) return null;
 	return (
-		<div style={{position: 'absolute', left: GC.cx - (GW * GC.s) / 2, right: GC.cx - (GW * GC.s) / 2, top: 64, height: 60, display: 'flex', alignItems: 'center', opacity: a, transform: `translateY(${(1 - a) * -16}px)`, fontFamily: TIGHT, color: '#E8E8EC'}}>
-			<div style={{display: 'flex', alignItems: 'center', gap: 16}}>
-				<Icon s={46} />
-				<Wordmark size={42} />
-			</div>
-			<div style={{marginLeft: 44, fontSize: 22, fontWeight: 500, color: '#9A9AA2', letterSpacing: '0.01em'}}>
-				Round <span style={{color: '#fff', fontWeight: 650, display: 'inline-block', transform: `scale(${1 + 0.25 * bump})`}}>{round}</span> · Tap what you like
-			</div>
-			<div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 18, fontSize: 22, fontWeight: 500, color: '#9A9AA2'}}>
-				Learning your eye
-				<div style={{width: 260, height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.12)', overflow: 'hidden'}}>
-					<div style={{width: `${pct}%`, height: '100%', borderRadius: 4, background: HOTFILL, boxShadow: `0 0 ${12 + 20 * bump}px rgba(255,90,60,0.7)`}} />
-				</div>
-				<span style={{color: '#fff', fontWeight: 650, width: 58, textAlign: 'right', fontVariantNumeric: 'tabular-nums'}}>{Math.round(pct)}%</span>
-			</div>
+		<div style={{position: 'absolute', left: x - s / 2, top: y - s / 2, width: s, height: s, transform: `scale(${0.3 + 0.7 * a})`, opacity: o, filter: 'drop-shadow(0 10px 40px rgba(255,60,90,0.6))'}}>
+			<svg width={s} height={s} viewBox="0 0 24 24">
+				<defs>
+					<linearGradient id="hh" x1="0" y1="0" x2="0.4" y2="1">
+						<stop offset="0" stopColor="#FFD06A" />
+						<stop offset="0.45" stopColor="#FF7A2E" />
+						<stop offset="1" stopColor="#FF2D7E" />
+					</linearGradient>
+				</defs>
+				<path d={HEART} fill="url(#hh)" />
+			</svg>
 		</div>
 	);
 };
 
-const SceneGrid: React.FC<{t: number}> = ({t}) => {
-	// framing B → C as the first flip lands
-	const m = easeInOut(clamp01((t - F1.at + 0.05) / 0.6));
-	const g = {cx: lerp(GB.cx, GC.cx, m), cy: lerp(GB.cy, GC.cy, m), s: lerp(GB.s, GC.s, m)};
-	// the winner flies out of the grid on beat 216
-	const fly = easeInOut(clamp01((t - bt(216)) / 0.55));
-	const dim = 1 - 0.8 * fly;
-	const gray = (i: number) => {
-		if (t >= flipMid(F1, i)) return 0;
-		const tap = TAPS_B.find((tp) => tp.cell === i);
-		if (tap && t >= tap.at) return 1 - clamp01((t - tap.at) / 0.16);
-		return 1;
-	};
-	const taps = [...TAPS_B, ...TAPS_C];
-	// cursor
-	const keys: CK[] = [{t: 4.55, x: 1500, y: 1180}];
-	for (const tp of TAPS_C) {
-		const c = cellScreen(tp.cell);
-		const p = {x: c.x + c.w * 0.52, y: c.y + c.h * 0.58};
-		keys.push({t: tp.at - 0.11, ...p}, {t: tp.at + 0.06, ...p});
-	}
-	keys.push({t: 9.95, x: keys[keys.length - 1].x + 60, y: keys[keys.length - 1].y + 140});
-	const cur = cursorAt(t, keys);
-	const press = Math.max(0, ...TAPS_C.map((tp) => pulse(t, tp.at - 0.05, 0.05, 0.12)));
-	const curO = clamp01((t - 4.6) / 0.2) * (1 - clamp01((t - 9.9) / 0.15));
-	// type over the gray grid (B only)
-	const typeRows: Row[] = [
+// ---------------------------------------------------------------- A · cold open: the sites you love (0 – 2.04)
+const HOOK_AT = [0, bt(200), bt(201)];
+const SceneHook: React.FC<{t: number}> = ({t}) => {
+	const i = HOOK_AT.filter((a) => t >= a).length - 1;
+	const k = t - HOOK_AT[i];
+	const punch = pulse(t, bt(202), 0.04, 0.3);
+	return (
+		<AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+			<div style={{position: 'absolute', inset: 0, transform: `scale(${1.06 - 0.05 * easeOut(clamp01(k / 0.9)) + 0.03 * punch})`}}>
+				<Full g={HOOK[i]} />
+			</div>
+			{HOOK_AT.map((a, j) => (
+				<HeartPop key={j} t={t} at={a + (j === 0 ? 0.05 : 0.02)} y={H * 0.6} />
+			))}
+			<HeartPop t={t} at={bt(202)} s={300} y={H * 0.6} />
+		</AbsoluteFill>
+	);
+};
+
+// ---------------------------------------------------------------- B · the ask: gray AI, then Taste on (2.04 – 5.35)
+const AW = 1100; // window width
+const AK = AW / 620;
+const AX = (FW - AW) / 2;
+const AY = 250;
+const SceneAsk: React.FC<{t: number}> = ({t}) => {
+	const on = easeOut(clamp01((t - L.you0) / 0.12));
+	const shimmer = t > L.make - 0.05 && t < L.blue ? -0.3 + 1.6 * clamp01((t - L.make + 0.05) / (L.blue - L.make)) : undefined;
+	const flip = easeInOut(clamp01((t - (L.blue - 0.16)) / 0.32));
+	// push into the result until it fills the frame
+	const push = easeInOut(clamp01((t - L.blue - 0.1) / 0.6));
+	const ox = AX + 20 * AK;
+	const oy = AY + 116 * AK;
+	const ow = 560 * AK;
+	const oh = (ow * SH) / SW;
+	const s = lerp(1, (FW * 1.005) / ow, push);
+	const tx = lerp(0, FW / 2 - (ox + ow / 2), push);
+	const ty = lerp(0, H / 2 - (oy + oh / 2), push);
+	const typeOut = clamp01((t - (L.blue - 0.1)) / 0.18);
+	const rows: Row[] = [
 		[
 			{t: 'CEILINGS', at: L.ceilings},
 			{t: 'ARE', at: L.are, st: 'expanded', wt: 220},
 			{t: 'GRAY', at: L.gray, fill: 'dim'},
 		],
 	];
-	const win = cellScreen(7);
-	const ww = lerp(win.w, FW * 1.04, fly);
-	const wh = (ww * SH) / SW;
-	const wx = lerp(win.x, (FW - ww) / 2, fly);
-	const wy = lerp(win.y, (H - wh) / 2 + 40 * (1 - fly), fly);
-	const push = 1 + 0.03 * clamp01((t - bt(216) - 0.55) / 0.9);
+	// cursor flips the Taste switch on "you"
+	const sw = {x: AX + AW - 16 * AK - 15 * AK, y: AY + 20 * AK};
+	const cur = cursorAt(t, [
+		{t: 2.55, x: 1560, y: 1010},
+		{t: L.you0 - 0.1, x: sw.x, y: sw.y + 4},
+		{t: L.you0 + 0.1, x: sw.x, y: sw.y + 4},
+		{t: L.them, x: sw.x + 90, y: sw.y + 220},
+	]);
+	const press = pulse(t, L.you0 - 0.05, 0.05, 0.12);
+	const curO = clamp01((t - 2.55) / 0.15) * (1 - clamp01((t - L.them) / 0.2));
 	return (
-		<Black spot={0.05}>
-			<div style={{position: 'absolute', left: g.cx - GW / 2, top: g.cy - GH / 2, width: GW, height: GH, transform: `scale(${g.s * (1 - 0.06 * fly)})`, transformOrigin: '50% 50%', perspective: 2400, opacity: dim}}>
-				<Grid t={t} base={BASE0} flips={FLIPS} taps={taps} gray={gray} />
+		<Black spot={0.06}>
+			<div style={{position: 'absolute', inset: 0, transformOrigin: '0 0', transform: `translate(${tx}px, ${ty}px) translate(${ox + ow / 2}px, ${oy + oh / 2}px) scale(${s}) translate(${-(ox + ow / 2)}px, ${-(oy + oh / 2)}px)`}}>
+				<div style={{position: 'absolute', left: AX, top: AY}}>
+					<AIWin w={AW} name="Chat" prompt={ASK.prompt} g={flip > 0.5 ? ASK.after : SLOP[3]} flip={flip} on={on} gray={1} shimmer={shimmer} />
+				</div>
 			</div>
-			{t < F1.at ? (
-				<>
-					<div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 380, background: 'linear-gradient(180deg, #000 70%, rgba(0,0,0,0))'}} />
-					<Centered rows={typeRows} t={t} top={70} />
-				</>
-			) : null}
-			{t >= F1.at ? (
-				<div style={{opacity: dim}}>
-					<Header t={t} />
+			{typeOut < 1 ? (
+				<div style={{opacity: 1 - typeOut, transform: `translateY(${-60 * typeOut}px)`}}>
+					<Centered rows={rows} t={t} top={46} />
 				</div>
 			) : null}
-			{curO > 0 ? <Cursor x={cur.x} y={cur.y} press={press} opacity={curO} s={1.6} /> : null}
-			{fly > 0 ? (
-				<div style={{position: 'absolute', left: wx, top: wy, width: ww, height: wh, borderRadius: lerp(10, 0, fly), overflow: 'hidden', boxShadow: '0 60px 140px rgba(0,0,0,0.7)', transform: `scale(${push})`}}>
-					<div style={{transform: `scale(${ww / SW})`, transformOrigin: '0 0'}}>
-						<Site g={WINNER} />
-					</div>
-				</div>
-			) : null}
-			{fly > 0 && fly < 1 ? (
-				<div style={{position: 'absolute', left: wx, top: wy, width: ww, height: wh, opacity: 1 - fly}}>
-					<Liked p={1} w={ww} h={wh} r={10} />
-				</div>
-			) : null}
+			{curO > 0 ? <Cursor x={cur.x} y={cur.y} press={press} opacity={curO} s={1.7} /> : null}
 		</Black>
 	);
 };
 
-// ---------------------------------------------------------------- D · refrain 1, then MOVE alone in the stop (10.93 – 15.93)
+// ---------------------------------------------------------------- C · how: swipe what you love, it learns your eye (5.35 – 10.84)
+const SW_AT = [209, 210, 211, 212, 213, 214, 215].map(bt);
+const SW_DIR: (1 | -1)[] = [1, 1, -1, 1, 1, 1, 1];
+const SWIPES: Swipe[] = SW_AT.map((at, i) => ({at, dir: SW_DIR[i]}));
+const DECK_CARDS: Card[] = DECKC.map((n) => (n === 'SLOP' ? SLOP[6] : n));
+const CHIPS = ['Cinematic photo', 'Big serif', '', 'Architectural', 'Glass & 3D', 'Moody light', 'Dark UI'];
+const TYPES: (Learn['type'] | undefined)[] = [undefined, 'serif', undefined, 'grotesk', 'mono', undefined, undefined];
+const PCT = [16, 31, 31, 52, 70, 86, 97];
+const LEARNS: Learn[] = SWIPES.flatMap((s, i) =>
+	s.dir > 0 ? [{at: s.at + 0.08, sw: (PAL[DECKC[i]] ?? ['#222', '#888']).slice(0, i === 6 ? 1 : 2), chip: CHIPS[i] || undefined, type: TYPES[i], pct: PCT[i]}] : [],
+);
+const NAME_AT = bt(215) + 0.42;
+const DCW = 900;
+const DX = 140;
+const DY = 205;
+const PX = 1140;
+const PY = 175;
+const SceneLearn: React.FC<{t: number}> = ({t}) => {
+	const a = easeOut(clamp01((t - bt(208)) / 0.4));
+	const push = 1 + 0.03 * clamp01((t - bt(208)) / 5.5);
+	return (
+		<Black spot={0.05}>
+			<div style={{position: 'absolute', inset: 0, transform: `scale(${push})`}}>
+				<div style={{position: 'absolute', left: DX, top: 72, display: 'flex', alignItems: 'center', gap: 18, opacity: a}}>
+					<Icon s={50} />
+					<Wordmark size={46} />
+					<div style={{marginLeft: 26, fontFamily: TIGHT, fontSize: 26, fontWeight: 500, color: '#9A9AA2'}}>Swipe right on what you love</div>
+				</div>
+				<div style={{position: 'absolute', left: DX, top: DY + (1 - a) * 80, opacity: a}}>
+					<Deck t={t} cards={DECK_CARDS} swipes={SWIPES} w={DCW} />
+				</div>
+				<div style={{position: 'absolute', left: DX, width: DCW, top: DY + (DCW * SH) / SW + 54, display: 'flex', justifyContent: 'center', opacity: a}}>
+					<DeckButtons t={t} swipes={SWIPES} />
+				</div>
+				<div style={{position: 'absolute', left: PX, top: PY + (1 - a) * 80, opacity: a}}>
+					<Profile t={t} learns={LEARNS} w={640} from={{x: DX + DCW / 2 - PX, y: DY + (DCW * SH) / SW / 2 - PY}} name={TASTE_NAME} nameAt={NAME_AT} />
+				</div>
+			</div>
+		</Black>
+	);
+};
+
+// ---------------------------------------------------------------- D · refrain 1, then MOVE alone in the stop (10.84 – 15.93)
 const R1ROWS: Row[] = [
 	[
 		{t: 'I', at: L.r1.i, st: 'expanded'},
@@ -220,7 +193,7 @@ const R1ROWS: Row[] = [
 	],
 ];
 const SceneR1: React.FC<{t: number}> = ({t}) => {
-	if (t < L.r1.move) {
+	if (t < L.r1.move - LEAD) {
 		const tf = Math.min(t, CUE.stop); // everything freezes when the band drops out
 		const push = 1 + 0.035 * easeOut(clamp01((tf - L.r1.i) / 2.6));
 		return (
@@ -232,10 +205,13 @@ const SceneR1: React.FC<{t: number}> = ({t}) => {
 		);
 	}
 	const hit = Math.max(...CUE.pick.map((p) => pulse(t, p, 0.03, 0.18)));
-	const sh = CUE.pick.reduce((a, p, i) => {
-		const s = shake(t, p, 10, i + 1);
-		return {x: a.x + s.x, y: a.y + s.y};
-	}, {x: 0, y: 0});
+	const sh = CUE.pick.reduce(
+		(acc, p, i) => {
+			const s = shake(t, p, 10, i + 1);
+			return {x: acc.x + s.x, y: acc.y + s.y};
+		},
+		{x: 0, y: 0},
+	);
 	return (
 		<Black spot={0.05}>
 			<div style={{position: 'absolute', inset: 0, transform: `translate(${sh.x}px, ${sh.y}px) scale(${1 + 0.035 * hit})`}}>
@@ -245,58 +221,27 @@ const SceneR1: React.FC<{t: number}> = ({t}) => {
 	);
 };
 
-// ---------------------------------------------------------------- E · on the drop it makes everything in your taste (15.93 – 18.29)
-const Browser: React.FC<{w: number; g: Gene; chrome: number}> = ({w, g, chrome}) => {
-	const bar = 46 * (w / 1100) * chrome;
+// ---------------------------------------------------------------- E · on the drop: what it makes for you, one per beat (15.93 – 18.29)
+const DROP_AT = [226, 227, 228, 229].map(bt);
+const PromptChip: React.FC<{text: string}> = ({text}) => (
+	<div style={{display: 'flex', alignItems: 'center', gap: 16, padding: '16px 26px 16px 18px', borderRadius: 999, background: 'rgba(14,14,16,0.82)', backdropFilter: 'blur(18px)', boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1.5px rgba(255,255,255,0.14)', fontFamily: TIGHT, fontSize: 30, fontWeight: 550, color: '#F4F4F6', whiteSpace: 'nowrap'}}>
+		<Icon s={40} />
+		{text}
+		<span style={{marginLeft: 8, padding: '6px 14px', borderRadius: 999, background: HOTFILL, fontSize: 20, fontWeight: 650, color: '#fff'}}>Taste on</span>
+	</div>
+);
+const SceneDrop: React.FC<{t: number}> = ({t}) => {
+	const i = DROP_AT.filter((a) => t >= a).length - 1;
+	const k = t - DROP_AT[i];
+	const sh = shake(t, CUE.drop, 16, 3);
+	const d = DROP[i];
 	return (
-		<div style={{position: 'relative', width: w, borderRadius: 14 * chrome, overflow: 'hidden', background: '#F7F4EE', boxShadow: `0 ${50 * chrome}px ${120 * chrome}px rgba(40,25,10,${0.35 * chrome})`}}>
-			<div style={{height: bar, display: 'flex', alignItems: 'center', gap: bar * 0.18, padding: `0 ${bar * 0.4}px`, background: '#EDE7DD', overflow: 'hidden'}}>
-				{['#FF5F57', '#FEBC2E', '#28C840'].map((c) => (
-					<div key={c} style={{width: bar * 0.26, height: bar * 0.26, borderRadius: '50%', background: c}} />
-				))}
-				<div style={{margin: '0 auto', height: bar * 0.6, width: w * 0.36, borderRadius: bar * 0.16, background: 'rgba(22,18,14,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: TIGHT, fontSize: bar * 0.3, color: '#6B6157'}}>emberandoak.coffee</div>
+		<AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+			<div style={{position: 'absolute', inset: 0, transform: `translate(${sh.x}px, ${sh.y}px) scale(${1.07 - 0.06 * easeOut(clamp01(k / 0.6))})`}}>
+				<Full g={d.n} />
 			</div>
-			<div style={{width: w, height: (w * SH) / SW, overflow: 'hidden'}}>
-				<div style={{transform: `scale(${w / SW})`, transformOrigin: '0 0'}}>
-					<Site g={g} />
-				</div>
-			</div>
-		</div>
-	);
-};
-const land = (t: number, at: number) => {
-	const s = spr(t, at, 17, 0.62);
-	return {o: clamp01((t - at) / 0.05), y: (1 - s) * 420, sc: 1.12 - 0.12 * s};
-};
-const SceneMake: React.FC<{t: number}> = ({t}) => {
-	const pull = easeInOut(clamp01((t - bt(227) + 0.08) / 0.5));
-	const bw = lerp(FW * 1.0, 1080, pull);
-	const bx = lerp(0, 420, pull);
-	const by = lerp(-46 * (FW / 1100) + (H - (FW * SH) / SW) / 2, 120, pull);
-	const sh = shake(t, CUE.drop, 14, 3);
-	const push = 1 + 0.03 * clamp01((t - bt(227)) / 1.8);
-	const items = [
-		{at: bt(227), x: 120, y: 300, r: -5, el: <Poster w={420} />},
-		{at: bt(228), x: 1460, y: 420, r: 4, el: <Bag w={330} />},
-		{at: bt(229), x: 1150, y: 430, r: -3, el: <Phone w={250} />},
-	];
-	return (
-		<AbsoluteFill style={{background: T.paper, overflow: 'hidden'}}>
-			<AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 70% at 40% 30%, rgba(255,250,240,0.9), rgba(0,0,0,0) 70%), linear-gradient(180deg, #EFE8DC, #E3D8C6)'}} />
-			<AbsoluteFill style={{backgroundImage: `url(${staticFile('img/grain.png')})`, backgroundSize: '320px 320px', opacity: 0.35, mixBlendMode: 'multiply'}} />
-			<div style={{position: 'absolute', inset: 0, transform: `translate(${sh.x}px, ${sh.y}px) scale(${push})`}}>
-				<div style={{position: 'absolute', left: bx, top: by}}>
-					<Browser w={bw} g={WINNER2} chrome={pull} />
-				</div>
-				{items.map((it, i) => {
-					const l = land(t, it.at);
-					if (t < it.at) return null;
-					return (
-						<div key={i} style={{position: 'absolute', left: it.x, top: it.y, opacity: l.o, transform: `translateY(${l.y}px) rotate(${it.r}deg) scale(${l.sc})`}}>
-							{it.el}
-						</div>
-					);
-				})}
+			<div style={{position: 'absolute', left: 0, right: 0, bottom: 64, display: 'flex', justifyContent: 'center'}}>
+				<PromptChip text={d.prompt} />
 			</div>
 		</AbsoluteFill>
 	);
@@ -318,9 +263,9 @@ const R2ROWS: Row[] = [
 		{t: 'TO', at: L.r2.to, st: 'expanded'},
 	],
 ];
-const T5 = taste(R5);
+const CARD_PAL = ['#161C29', '#1C478C', '#706755', '#E9E4D8', '#3C403A'];
 const SceneCard: React.FC<{t: number}> = ({t}) => {
-	const c = spr(t, L.r2.ooh, 9, 0.78);
+	const c = spr(t, L.r2.ooh - LEAD, 9, 0.78);
 	const cw = 1120;
 	const ch = (540 / 860) * cw;
 	const back = clamp01((t - L.r2.ooh) / 0.4);
@@ -329,22 +274,17 @@ const SceneCard: React.FC<{t: number}> = ({t}) => {
 			<div style={{position: 'absolute', inset: 0, filter: back > 0 ? `brightness(${1 - 0.55 * back}) blur(${3 * back}px)` : undefined, transform: `scale(${1 + 0.03 * clamp01((t - L.r2.i) / 3)})`}}>
 				<Centered rows={R2ROWS} t={t} w={1820} />
 			</div>
-			{t >= L.r2.ooh ? (
+			{t >= L.r2.ooh - LEAD ? (
 				<div style={{position: 'absolute', left: (FW - cw) / 2, top: (H - ch) / 2 + (1 - c) * 760, transform: `perspective(2000px) rotateX(${(1 - c) * 28}deg) scale(${0.96 + 0.04 * c + 0.012 * clamp01((t - L.r2.ooh - 0.6) / 1.6)})`}}>
-					<TasteCard w={cw} t={t} t0={L.r2.ooh + 0.15} thumbs={[WINNER2, T5[1], T5[3], T5[5]]} />
+					<TasteCard w={cw} t={t} t0={L.r2.ooh + 0.1} thumbs={['cominvi', 'era', 'kononenko', 'likova']} name={TASTE_NAME} pal={CARD_PAL} typeNote="Big serif, tight grotesk, mono details" stat="Top 2% cinematic" />
 				</div>
 			) : null}
 		</Black>
 	);
 };
 
-// ---------------------------------------------------------------- G · refrain 3 + it plugs into every AI (22.99 – 27.70)
-const APPS = [
-	{name: 'ChatGPT', prompt: 'Landing page for my café', from: SLOP[2], to: WINNER},
-	{name: 'Claude', prompt: 'Poster for Friday night', from: SLOP[5], to: T5[2]},
-	{name: 'Figma', prompt: 'Homepage for a bike shop', from: SLOP[9], to: T5[4]},
-	{name: 'Canva', prompt: 'Menu for the bakery', from: SLOP[14], to: T5[6]},
-];
+// ---------------------------------------------------------------- G · refrain 3 + every AI gets your taste (22.99 – 27.70)
+const SLOP_FROM = [SLOP[2], SLOP[5], SLOP[9], SLOP[14]];
 const R3TOP: Row[] = [
 	[
 		{t: 'I', at: L.r3.i},
@@ -374,14 +314,14 @@ const SceneAI: React.FC<{t: number}> = ({t}) => {
 			<div style={{position: 'absolute', inset: 0, transform: `translate(${sh.x}px, ${sh.y}px) scale(${1 + 0.025 * clamp01((t - 22.99) / 4.7)})`}}>
 				<Centered rows={R3TOP} t={t} top={70} />
 				{APPS.map((a, i) => {
-					const at = 22.99 + i * 0.06;
+					const at = bt(238) + i * 0.06;
 					const e = easeOut(clamp01((t - at) / 0.35));
-					const fl = clamp01((t - L.r3.move - i * 0.07) / 0.42);
-					const on = clamp01((t - L.r3.move - i * 0.07 + 0.05) / 0.12);
-					const gr = 1 - on;
+					const m = L.r3.move - LEAD + i * 0.06;
+					const fl = clamp01((t - m + 0.12) / 0.3);
+					const on = clamp01((t - m + 0.05) / 0.1);
 					return (
-						<div key={i} style={{position: 'absolute', left: x0 + i * (ww + gap), top: wy, opacity: e, transform: `translateY(${(1 - e) * 60}px)`, filter: gr > 0.01 ? `saturate(${1 - 0.7 * gr}) brightness(${1 - 0.2 * gr})` : undefined}}>
-							<AIWin w={ww} name={a.name} prompt={a.prompt} g={fl > 0.5 ? a.to : a.from} flip={easeInOut(fl)} on={on} />
+						<div key={i} style={{position: 'absolute', left: x0 + i * (ww + gap), top: wy, opacity: e, transform: `translateY(${(1 - e) * 60}px)`}}>
+							<AIWin w={ww} name={a.name} prompt={a.prompt} g={fl > 0.5 ? a.to : SLOP_FROM[i]} flip={easeInOut(fl)} on={on} gray={1} />
 						</div>
 					);
 				})}
@@ -391,8 +331,7 @@ const SceneAI: React.FC<{t: number}> = ({t}) => {
 	);
 };
 
-// ---------------------------------------------------------------- H · refrain 4, the big one, over a wall of your taste (27.70 – 32.40)
-const WALL: Gene[] = [...T5, ...taste(R4), ...taste(R3), WINNER, WINNER2];
+// ---------------------------------------------------------------- H · refrain 4, the big one, over a wall of the best (27.70 – 32.40)
 const Wall: React.FC<{t: number; bright: number; blur?: number; cw?: number}> = ({t, bright, blur = 0, cw = 372}) => {
 	const ch = (cw * SH) / SW;
 	const gap = 18;
@@ -431,11 +370,11 @@ const R4ROWS: Row[] = [
 	[{t: 'MOVE', at: L.r4.move, st: 'normal', fill: 'hot', wt: 900}],
 ];
 const SceneR4: React.FC<{t: number}> = ({t}) => {
-	const hot = pulse(t, L.r4.move, 0.05, 0.9);
-	const sh = shake(t, L.r4.move, 16, 7);
+	const hot = pulse(t, L.r4.move - LEAD, 0.05, 0.9);
+	const sh = shake(t, L.r4.move - LEAD, 16, 7);
 	return (
 		<Black spot={0}>
-			<Wall t={t} bright={0.16 + 0.12 * hot} blur={2} />
+			<Wall t={t} bright={0.2 + 0.14 * hot} blur={2} />
 			<AbsoluteFill style={{background: 'radial-gradient(ellipse 60% 55% at 50% 50%, rgba(0,0,0,0.55), rgba(0,0,0,0.15) 80%)'}} />
 			<div style={{position: 'absolute', inset: 0, transform: `translate(${sh.x}px, ${sh.y}px) scale(${1 + 0.03 * clamp01((t - 27.7) / 4) + 0.02 * hot})`}}>
 				<Centered rows={R4ROWS} t={t} w={1800} />
@@ -451,7 +390,7 @@ const SceneEnd: React.FC<{t: number}> = ({t}) => {
 	const hit = pulse(t, CUE.lastHit, 0.04, 0.5);
 	return (
 		<Black spot={0}>
-			<Wall t={t} bright={0.22 + 0.1 * hit} blur={6} cw={300} />
+			<Wall t={t} bright={0.26 + 0.1 * hit} blur={6} cw={300} />
 			<AbsoluteFill style={{background: 'radial-gradient(ellipse 55% 50% at 50% 50%, rgba(0,0,0,0.85), rgba(0,0,0,0.35) 85%)'}} />
 			<AbsoluteFill style={{background: `radial-gradient(ellipse 40% 30% at 50% 46%, rgba(255,90,60,${0.18 * hit}), rgba(0,0,0,0) 70%)`}} />
 			<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 46, transform: `scale(${0.94 + 0.06 * a + 0.035 * hit})`}}>
@@ -468,13 +407,14 @@ const SceneEnd: React.FC<{t: number}> = ({t}) => {
 };
 
 // ---------------------------------------------------------------- the film
-export const SC = {grid: 2.1, r1: L.r1.i, make: CUE.drop, card: bt(230), ai: bt(238), r4: bt(246), end: bt(254)};
+export const SC = {ask: L.ceilings - LEAD - 0.02, learn: bt(208), r1: L.r1.i - LEAD, drop: CUE.drop, card: bt(230), ai: bt(238), r4: bt(246), end: bt(254)};
 export const Film: React.FC = () => {
 	const t = useCurrentFrame() / FPS;
-	if (t < SC.grid) return <SceneDeck t={t} />;
-	if (t < SC.r1) return <SceneGrid t={t} />;
-	if (t < SC.make) return <SceneR1 t={t} />;
-	if (t < SC.card) return <SceneMake t={t} />;
+	if (t < SC.ask) return <SceneHook t={t} />;
+	if (t < SC.learn) return <SceneAsk t={t} />;
+	if (t < SC.r1) return <SceneLearn t={t} />;
+	if (t < SC.drop) return <SceneR1 t={t} />;
+	if (t < SC.card) return <SceneDrop t={t} />;
 	if (t < SC.ai) return <SceneCard t={t} />;
 	if (t < SC.r4) return <SceneAI t={t} />;
 	if (t < SC.end) return <SceneR4 t={t} />;

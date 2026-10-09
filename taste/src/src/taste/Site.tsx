@@ -30,6 +30,8 @@ export type Taste = {
 	q: number; // 0..1 how refined (grain, rules, details)
 };
 export type Gene = Slop | Taste;
+/** a design: one of ours, or a real Awwwards winner by screenshot name (public/aw/<name>.jpg, 1440×900 @1.5x) */
+export type Card = Gene | string;
 
 const PAL: Record<Pal, {bg: string; ink: string; sub: string; acc: string}> = {
 	paper: {bg: T.paper, ink: T.ink, sub: T.ink2, acc: T.terra},
@@ -206,17 +208,19 @@ const SlopSite: React.FC<{g: Slop}> = ({g}) => {
 };
 
 /** a design at native 1440×900 */
-export const Site: React.FC<{g: Gene}> = ({g}) => (
-	<div style={{position: 'relative', width: SW, height: SH, overflow: 'hidden'}}>{g.kind === 'slop' ? <SlopSite g={g} /> : <TasteSite g={g} />}</div>
+export const Site: React.FC<{g: Card; small?: boolean}> = ({g, small}) => (
+	<div style={{position: 'relative', width: SW, height: SH, overflow: 'hidden'}}>
+		{typeof g === 'string' ? <Img src={staticFile(small ? `aw/s/${g}.jpg` : `aw/${g}.jpg`)} style={{width: SW, height: SH, objectFit: 'cover', display: 'block'}} /> : g.kind === 'slop' ? <SlopSite g={g} /> : <TasteSite g={g} />}
+	</div>
 );
 
 /** a design scaled into a w-wide box */
-export const SiteAt: React.FC<{g: Gene; w: number; style?: React.CSSProperties; radius?: number}> = ({g, w, style, radius = 10}) => {
+export const SiteAt: React.FC<{g: Card; w: number; style?: React.CSSProperties; radius?: number}> = ({g, w, style, radius = 10}) => {
 	const s = w / SW;
 	return (
 		<div style={{position: 'relative', width: w, height: SH * s, overflow: 'hidden', borderRadius: radius, ...style}}>
 			<div style={{position: 'absolute', left: 0, top: 0, transform: `scale(${s})`, transformOrigin: '0 0'}}>
-				<Site g={g} />
+				<Site g={g} small={w <= 640} />
 			</div>
 		</div>
 	);

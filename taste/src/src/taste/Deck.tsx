@@ -1,16 +1,18 @@
 import React from 'react';
 import {clamp01, easeIn, easeOut, spr} from '../lib/tokens';
 import {HOTFILL} from '../lib/Type';
-import {Gene, SH, SW, Site} from './Site';
+import {Card, Gene, SH, SW, Site} from './Site';
 import {Liked} from './Grid';
 
 export type Swipe = {at: number; dir: 1 | -1};
 
-const DW = 1060;
-const DH = (DW * SH) / SW;
+const DW0 = 1060;
 
 /** the swipe deck: the top card flies off on each swipe, the next one steps up */
-export const Deck: React.FC<{t: number; cards: Gene[]; swipes: Swipe[]}> = ({t, cards, swipes}) => {
+export const Deck: React.FC<{t: number; cards: Card[]; swipes: Swipe[]; w?: number}> = ({t, cards, swipes, w = DW0}) => {
+	const DW = w;
+	const DH = (w * SH) / SW;
+	const k = w / DW0;
 	const gone = swipes.filter((s) => t >= s.at + 0.34).length;
 	const live = swipes[gone] && t >= swipes[gone].at - 0.12 ? swipes[gone] : null;
 	return (
@@ -25,7 +27,7 @@ export const Deck: React.FC<{t: number; cards: Gene[]; swipes: Swipe[]}> = ({t, 
 					const leaving = live && depth === 1 ? clamp01((t - live.at) / 0.3) : 0;
 					const d = depth - easeOut(leaving);
 					let x = 0;
-					let y = d * -34;
+					let y = d * -34 * k;
 					let rot = 0;
 					let s = 1 - d * 0.06;
 					let o = depth > 2 ? 0 : 1;
@@ -35,8 +37,8 @@ export const Deck: React.FC<{t: number; cards: Gene[]; swipes: Swipe[]}> = ({t, 
 						const k = t - live.at;
 						const pre = clamp01((k + 0.12) / 0.12); // lean into it
 						const fly = easeIn(clamp01(k / 0.32));
-						x = live.dir * (70 * pre + 1700 * fly);
-						y = 40 * fly;
+						x = live.dir * (70 * pre + 1700 * fly) * k;
+						y = 40 * fly * k;
 						rot = live.dir * (4 * pre + 18 * fly);
 						if (live.dir > 0) like = clamp01(spr(t, live.at - 0.1, 26, 0.5));
 						else nope = clamp01(k / 0.1);
@@ -64,8 +66,8 @@ export const Deck: React.FC<{t: number; cards: Gene[]; swipes: Swipe[]}> = ({t, 
 		</div>
 	);
 };
-export const DECK_W = DW;
-export const DECK_H = DH;
+export const DECK_W = DW0;
+export const DECK_H = (DW0 * SH) / SW;
 
 /** the two round buttons under the deck */
 export const DeckButtons: React.FC<{t: number; swipes: Swipe[]}> = ({t, swipes}) => {

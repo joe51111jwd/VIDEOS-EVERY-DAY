@@ -1,7 +1,7 @@
 import React from 'react';
 import {clamp01, easeInOut, easeOut, spr} from '../lib/tokens';
 import {HOTFILL} from '../lib/Type';
-import {Gene, SH, SW, Site} from './Site';
+import {Card, Gene, SH, SW, Site} from './Site';
 
 export const CW = 344;
 export const CH = (CW * SH) / SW;
