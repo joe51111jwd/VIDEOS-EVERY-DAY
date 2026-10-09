@@ -119,9 +119,11 @@ const LineSvg: React.FC<{l: Line; width: number; f: number; sheen: number}> = ({
   // (on the cut frame itself the line is already there, mid-snap, so the hit lands on the beat)
   const k = l.inF === undefined ? 1 : interpolate(f - l.inF, [0, 6], [0.3, 1], {...clamp, easing: out3});
   const wght = (l.wght ?? 900) * (0.3 + 0.7 * k);
+  // and it lands narrow, then stretches out to the full width (centred)
+  const ex = l.inF === undefined ? 1 : interpolate(f - l.inF, [0, 9], [0.45, 1], {...clamp, easing: out3});
   const base = fit(l, width);
-  const cur = fit({...l, h: base.h, wdth: undefined}, width, wght); // same height, the width axis re-solved at this weight
-  const g = l.inF === undefined ? base : {...cur, h: base.h};
+  const cur = fit({...l, h: base.h, wdth: undefined}, width * ex, wght); // same height, the width axis re-solved at this weight and width
+  const g = l.inF === undefined ? base : {...cur, h: base.h, x: cur.x + (width * (1 - ex)) / 2};
   const runs = l.t.split(/([{}])/).reduce<{t: string; hot: boolean}[]>((acc, p) => {
     if (p === '{') acc.push({t: '', hot: true});
     else if (p === '}') acc.push({t: '', hot: false});
