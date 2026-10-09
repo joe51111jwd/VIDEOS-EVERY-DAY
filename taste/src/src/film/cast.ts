@@ -1,18 +1,21 @@
 // Real Awwwards Site of the Day winners (live screenshots in public/aw/, captured by tools/aw-capture.mjs).
 // Inputs (what you like) and outputs (what AI makes once it has your taste) never share a site.
 
-/** cold open: the sites you love, one per beat */
-export const HOOK = ['hobro', 'boc', 'zeroz'];
 /** the ask: "a homepage for my studio" */
 export const ASK = {prompt: 'Design a homepage for my studio', after: 'lxl'};
 /** the deck you swipe: right = like, left = nope (index of the one slop card) */
 export const DECKC = ['cominvi', 'era', 'SLOP', 'kononenko', 'likova', 'izanami', 'moto', 'unitedcarriers', 'landberg'];
-/** what it makes on the drop */
-export const DROP = [
+/** "make anything in your taste": one prompt and one result per beat */
+export const MAKE = [
 	{n: 'coffeetech', prompt: 'Site for my coffee brand'},
 	{n: 'honey', prompt: 'Homepage for my interiors studio'},
 	{n: 'moon', prompt: 'Launch page for my exhibit'},
 	{n: 'vero', prompt: 'Site for my bridal atelier'},
+	{n: 'serotoninn', prompt: 'Store for my fashion label'},
+	{n: 'hobro', prompt: 'Site for my digital agency'},
+	{n: 'montreal', prompt: 'Travel guide for my city'},
+	{n: 'k95', prompt: 'Portfolio for my design studio'},
+	{n: 'sstr', prompt: 'Product page for our new drill'},
 ];
 /** every AI, now with your taste */
 export const APPS = [

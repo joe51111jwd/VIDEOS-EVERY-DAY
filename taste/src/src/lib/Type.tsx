@@ -71,7 +71,6 @@ export type It = {
 	wt?: number;
 	fill?: 'chrome' | 'hot' | 'white' | 'dim' | string;
 	tr?: number; // tracking em
-	morph?: boolean; // thin → heavy as it lands (default true for wt >= 600)
 };
 export type Row = It[];
 /** words start rising this long before their onset (2 frames at 30 fps) */
@@ -89,18 +88,28 @@ export const rowFit = (row: Row, w: number, sp = 0.18) => {
 };
 export const stackH = (rows: Row[], w: number, gap = 0.022) => rows.reduce((a, r) => a + rowFit(r, w).h, 0) + gap * w * (rows.length - 1);
 
-const Item: React.FC<{it: It; t: number; fs: number; w: number; x: number; h: number}> = ({it, t, fs, w, x, h}) => {
-	// lands ON the sung onset: the 2-frame rise starts LEAD before it, so the word is whole when it's heard
-	const k = t - it.at + LEAD;
-	if (k < -0.001) return null;
+/** the Apple stretch: a line lands thin and squeezed, then swells to full weight and full width */
+export const EXPAND = 0.45;
+const ease4 = (p: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, p)), 4);
+export type Fx = 'expand' | 'rise';
+
+const Item: React.FC<{it: It; t: number; fs: number; w: number; x: number; h: number; fx: Fx}> = ({it, t, fs, w, x, h, fx}) => {
 	const st = it.st ?? 'condensed';
 	const wt = it.wt ?? 800;
 	const tr = it.tr ?? -0.01;
-	const p = Math.min(1, k / LEAD);
-	const e = 1 - Math.pow(1 - p, 2);
-	const doMorph = it.morph ?? false;
-	const m = doMorph ? Math.min(1, k / 0.2) : 1;
-	const cw = doMorph ? Math.round(180 + (wt - 180) * (1 - Math.pow(1 - m, 2))) : wt;
+	let rise = 1;
+	let cw = wt;
+	if (fx === 'expand') {
+		// on screen from the frame the word is sung (or the beat lands), thin, then it fills out
+		if (t < it.at) return null;
+		cw = Math.round(120 + (wt - 120) * ease4((t - it.at) / EXPAND));
+	} else {
+		// rise: the 2-frame rise starts LEAD before the onset, so the word is whole when it's heard
+		const k = t - it.at + LEAD;
+		if (k < -0.001) return null;
+		const p = Math.min(1, k / LEAD);
+		rise = 1 - Math.pow(1 - p, 2);
+	}
 	const sx = cw === wt ? 1 : w / Math.max(1, (measure(it.t, cw, st, tr) * fs) / 100);
 	return (
 		<div style={{position: 'absolute', left: x, top: 0, width: w, height: h, overflow: 'hidden'}}>
@@ -108,7 +117,7 @@ const Item: React.FC<{it: It; t: number; fs: number; w: number; x: number; h: nu
 				style={{
 					position: 'absolute',
 					left: 0,
-					top: -fs * ASC + (1 - e) * h * 0.95,
+					top: -fs * ASC + (1 - rise) * h * 0.95,
 					fontFamily: DISPLAY,
 					fontWeight: cw,
 					fontStretch: STRETCH_PCT[st],
@@ -133,8 +142,8 @@ const Item: React.FC<{it: It; t: number; fs: number; w: number; x: number; h: nu
 	);
 };
 
-/** rows of justified type; `t` is the clock */
-export const Stack: React.FC<{rows: Row[]; t: number; w: number; gap?: number; style?: React.CSSProperties}> = ({rows, t, w, gap = 0.022, style}) => {
+/** rows of justified type; `t` is the clock. With fx 'expand' each row grows from the center as it lands */
+export const Stack: React.FC<{rows: Row[]; t: number; w: number; gap?: number; fx?: Fx; style?: React.CSSProperties}> = ({rows, t, w, gap = 0.022, fx = 'expand', style}) => {
 	let y = 0;
 	return (
 		<div style={{position: 'relative', width: w, height: stackH(rows, w, gap), ...style}}>
@@ -142,13 +151,15 @@ export const Stack: React.FC<{rows: Row[]; t: number; w: number; gap?: number; s
 				const f = rowFit(row, w);
 				const top = y;
 				y += f.h + gap * w;
+				const r0 = Math.min(...row.map((it) => it.at));
+				const sx = fx === 'expand' ? 0.3 + 0.7 * ease4((t - r0) / EXPAND) : 1;
 				let x = 0;
 				return (
-					<div key={ri} style={{position: 'absolute', left: 0, top, width: w, height: f.h}}>
+					<div key={ri} style={{position: 'absolute', left: 0, top, width: w, height: f.h, transform: sx < 1 ? `scaleX(${sx})` : undefined, transformOrigin: '50% 50%'}}>
 						{row.map((it, ii) => {
 							const xi = x;
 							x += f.ws[ii] + f.sp;
-							return <Item key={ii} it={it} t={t} fs={f.fs} w={f.ws[ii]} x={xi} h={f.h} />;
+							return <Item key={ii} it={it} t={t} fs={f.fs} w={f.ws[ii]} x={xi} h={f.h} fx={fx} />;
 						})}
 					</div>
 				);
