@@ -44,8 +44,9 @@ const args = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swif
   '--autoplay-policy=no-user-gesture-required', '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
   '--disable-backgrounding-occluded-windows', '--hide-scrollbars', '--force-color-profile=srgb'];
 const browser = await chromium.launch({ args, executablePath: spec.full ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined });
+const wv = spec.warmupViewport; // optional: warm up (free-run) at a small size so heavy GL pages get through their intro fast
 const ctx = await browser.newContext({
-  viewport: { width: vw, height: vh }, deviceScaleFactor: dpr,
+  viewport: wv ? { width: wv.w, height: wv.h } : { width: vw, height: vh }, deviceScaleFactor: dpr,
   isMobile: !!spec.mobile, hasTouch: !!spec.mobile, reducedMotion: 'no-preference', colorScheme: spec.colorScheme || 'light',
   userAgent: spec.mobile ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' : undefined,
 });
@@ -58,6 +59,10 @@ if (spec.routes) {
   // r.url: hand the request to another server (keeps Range requests, so media can seek); r.file: serve a file whole
   for (const r of spec.routes) await ctx.route(new RegExp(r.match), (route) => (r.url ? route.continue({ url: r.url }) : route.fulfill({ path: r.file, contentType: r.type || 'video/webm' })));
 }
+// optional: sign in to a gated preview first (form POST; the cookie lands in this context only)
+// a form value written as "$NAME" is read from the environment, so specs can be committed without it
+const loginForm = spec.login ? Object.fromEntries(Object.entries(spec.login.form).map(([k, v]) => [k, typeof v === 'string' && v.startsWith('$') ? process.env[v.slice(1)] ?? '' : v])) : null;
+if (spec.login) await ctx.request.post(spec.login.url, { form: loginForm, maxRedirects: 0 }).catch((x) => console.log('[login]', String(x).slice(0, 120)));
 const page = await ctx.newPage();
 page.on('console', (m) => { if (m.type() === 'error' && !spec.quiet) console.log('[page]', m.text().slice(0, 240)); });
 page.on('pageerror', (e) => console.log('[pageerror]', String(e).slice(0, 240)));
@@ -85,6 +90,7 @@ if (spec.warmup?.stopWhen) {
   while (Date.now() < lim && !(await page.evaluate(() => window.__vt.stopped))) await page.waitForTimeout(100);
   if (!(await page.evaluate(() => window.__vt.stopped))) console.log('[cap] stopWhen never hit; stopping anyway');
 }
+if (wv) { await page.setViewportSize({ width: vw, height: vh }); await page.waitForTimeout(spec.warmup?.resizeMs ?? 3000); }
 await page.evaluate(() => window.__vt.stopFreeRun());
 console.log(`[cap] ${spec.name}: loaded + warm in ${((Date.now() - t0) / 1000).toFixed(1)}s, capturing ${N} frames @${fps}`);
 
@@ -115,6 +121,8 @@ for (let f = -pre; f < N; f++) {
     if (e.js) await page.evaluate(e.js).catch((x) => console.log('[event err]', String(x).slice(0, 200)));
     if (e.click) { await client.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: e.click[0], y: e.click[1], button: 'left', clickCount: 1 }); await client.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: e.click[0], y: e.click[1], button: 'left', clickCount: 1 }); }
     if (e.key) await page.keyboard.press(e.key);
+    if (e.down) await page.keyboard.down(e.down);
+    if (e.up) await page.keyboard.up(e.up);
     if (e.tap) await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: e.tap[0], y: e.tap[1] }] }).then(() => client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }));
   }
   const y = track(scrollKeys, 'y', Math.max(0, t));
@@ -142,7 +150,7 @@ for (let f = -pre; f < N; f++) {
   const shot = await page.screenshot({ type: 'jpeg', quality: spec.quality ?? 93, scale: 'device', caret: 'initial', timeout: 120000 });
   if (!ff.stdin.write(shot)) await new Promise((r) => ff.stdin.once('drain', r));
   log.push({ f, t: +t.toFixed(4), scrollY: sy, mouse: lastMouse, down: mouseDown });
-  if (f % 60 === 0) console.log(`[cap] ${spec.name} frame ${f}/${N}  ${((Date.now() - tStart) / Math.max(1, f + pre + 1)).toFixed(0)} ms/frame`);
+  if (f % (spec.logEvery || 60) === 0) console.log(`[cap] ${spec.name} frame ${f}/${N}  ${((Date.now() - tStart) / Math.max(1, f + pre + 1)).toFixed(0)} ms/frame`);
 }
 ff.stdin.end();
 await new Promise((r) => ff.on('close', r));

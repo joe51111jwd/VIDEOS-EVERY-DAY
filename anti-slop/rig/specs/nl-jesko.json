@@ -1,0 +1,30 @@
+{
+ "name": "nl-jesko",
+ "url": "https://nightline-nu.vercel.app/?autopilot=1&autostart=1&car=jesko-absolut&track=neon-district&mode=race&bots=4&skill=hard&time=night&view=chase&quality=high",
+ "login": {
+  "url": "https://nightline-nu.vercel.app/__beta",
+  "form": {
+   "password": "$NIGHTLINE_BETA",
+   "next": "/"
+  }
+ },
+ "initJs": "addEventListener('DOMContentLoaded',()=>{const s=document.createElement('style');s.textContent='.hud,.fun-feed,.fun-spectate,.debug-overlay,.tune-root,.tune-pill,.tune-telemetry{display:none!important}';document.head.appendChild(s);});",
+ "out": "/home/user/work/cap/nl/nl-jesko.mp4",
+ "viewport": {
+  "w": 1280,
+  "h": 720
+ },
+ "dpr": 1.5,
+ "fps": 30,
+ "duration": 0.9,
+ "quiet": true,
+ "logEvery": 10,
+ "warmupViewport": {
+  "w": 320,
+  "h": 180
+ },
+ "warmup": {
+  "ms": 75000,
+  "resizeMs": 5000
+ }
+}

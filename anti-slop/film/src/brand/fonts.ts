@@ -7,7 +7,15 @@ const faces: [string, string, FontFaceDescriptors][] = [
   ['Instrument Serif', 'fonts/InstrumentSerif-400-normal.woff2', {weight: '400'}],
   ['Instrument Serif', 'fonts/InstrumentSerif-400-italic.woff2', {weight: '400', style: 'italic'}],
   ['JetBrains Mono', 'fonts/JetBrainsMono-500-normal.woff2', {weight: '500'}],
+  ['Roboto Flex', 'fonts/RobotoFlex-var.woff2', {weight: '100 1000', stretch: '25% 151%'}],
 ];
+
+let ready = false;
+let resolveReady: () => void = () => {};
+const readyP = new Promise<void>((r) => (resolveReady = r));
+/** True once every face has loaded, so text measured from now on is measured in the right font. */
+export const fontsReady = () => ready;
+export const whenFontsReady = () => readyP;
 
 let loaded = false;
 export const loadFonts = () => {
@@ -21,9 +29,15 @@ export const loadFonts = () => {
       document.fonts.add(f);
     }),
   )
-    .then(() => continueRender(h))
+    .then(() => {
+      ready = true;
+      resolveReady();
+      continueRender(h);
+    })
     .catch((e) => {
       console.error(e);
+      ready = true;
+      resolveReady();
       continueRender(h);
     });
 };
