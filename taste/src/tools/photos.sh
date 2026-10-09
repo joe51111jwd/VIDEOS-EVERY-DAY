@@ -1,0 +1,37 @@
+#!/bin/bash
+# Fetches the film's stock photos (Unsplash, Unsplash License) into public/img/. Not committed: run once after cloning.
+set -e
+cd "$(dirname "$0")/../public/img"
+while read -r name id; do
+	[ -f "$name.jpg" ] || curl -fsSL "https://images.unsplash.com/photo-$id?w=1400&q=80&fm=jpg" -o "$name.jpg"
+done <<'LIST'
+beach 1507525428034-b723cf961d3e
+beans 1447933601403-0c6688de566e
+bedroom 1615874959474-d609969a20ed
+bike 1485965120184-e220f721d03e
+blue 1534528741775-53994a69daeb
+bread 1509440159596-0249088772ff
+cafe 1554118811-1e0d58224f24
+cups 1509042239860-f550ce710b93
+hills 1501854140801-50d01698950b
+house 1600585154340-be6161a56a0c
+interior 1513694203232-719a280e022f
+jacket 1551028719-00167b16eac5
+knit 1558769132-cb1aea458c5e
+latte 1495474472287-4d71bcdd2085
+loft 1524758631624-e2822e304c36
+makeup 1596462502278-27bfdc403348
+milan 1539109136881-3be0616acf4b
+mug 1514228742587-6b1558fcca3d
+peaks 1506905925346-21bda4d32df4
+polaroid 1526170375885-4d8ecf77b99f
+rack 1490481651871-ab68de25d43d
+road 1500530855697-b586d89ba3ee
+sand 1556228578-8c89e6adf883
+shades 1511499767150-a48a237f0083
+store 1445205170230-053b83016050
+stripes 1544005313-94ddf0286df2
+white 1519710164239-da123dc03ef4
+yellow 1515886657613-9f3515b0c78f
+LIST
+ls | wc -l

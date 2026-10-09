@@ -1,6 +1,7 @@
 import React from 'react';
 import {MONO, SANS} from '../lib/tokens';
 import {Shell, Traffic, WinBox} from '../mac/Window';
+import {IBranch} from '../mac/icons';
 
 /** a line is plain text or colored spans: [text, color][] */
 export type TLine = string | [string, string][];
@@ -59,8 +60,8 @@ export const Code: React.FC<{box: WinBox; file: string; files: string[]; lines: 
 			))}
 		</div>
 		<div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 22, background: '#181818', borderTop: '1px solid #2B2B2B', fontFamily: SANS, fontSize: 11.5, color: '#9D9D9D', display: 'flex', alignItems: 'center', gap: 14, paddingLeft: 12}}>
-			<span>⎇ main</span>
-			<span>0 ⚠ 0</span>
+			<span style={{display: 'flex', alignItems: 'center', gap: 4}}><IBranch s={12} />main</span>
+			<span>0 errors · 0 warnings</span>
 			<span style={{marginLeft: 'auto', marginRight: 14}}>TypeScript React</span>
 		</div>
 	</Shell>

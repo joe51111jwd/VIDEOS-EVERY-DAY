@@ -1,0 +1,4 @@
+node_modules/
+out/
+# stock photos: fetched by tools/photos.sh (not redistributed)
+public/img/*.jpg
