@@ -1,6 +1,6 @@
 import React from 'react';
 import {C, F, E, clamp, prog, spr} from '../lib/theme';
-import {at} from './beats';
+import {at, hit} from './beats';
 import {Page, Plate} from '../type/Page';
 import {Typed} from '../type/Typed';
 import {Mark, Wordmark} from '../ap/Brand';
@@ -10,7 +10,7 @@ import {EditorApp} from '../apps/Editor';
 import {CodeApp} from '../apps/Code';
 import {donutFrame} from './SApps';
 
-/** "PASTE IT." on "touch it", "WATCH IT GET DONE." on "bring it" */
+/** "PASTE IT." on verb 57, "WATCH IT GET DONE." on verb 58 */
 export const SClose: React.FC<{t: number}> = ({t}) => (
 	<Page t={t - at(56) + 1} index="07" label="TUTORIAL AUTOPILOT">
 		<Typed
@@ -32,14 +32,18 @@ const MY = 236;
 const MS = 176;
 const WX = MX + MS + 44;
 
-/** construction-view logo on "leave it" (the wordmark types right behind it), the line on "start", everything locks in on "format it" */
+/** construction-view logo on verb 62 (the wordmark types right behind it); it locks when the band drops out,
+ * with the four apps sliding in under it; the line types on the first closing chant, and every app gets its
+ * done check on the song's last big beat */
 export const LOGO_IN = () => at(61);
 export const SLogo: React.FC<{t: number}> = ({t}) => {
 	const IN = LOGO_IN();
-	const lock = at(63);
+	const lock = hit('lock');
+	const apps = hit('chant2');
 	const guides = 1 - prog(t, lock - 0.02, lock + 0.08);
 	const draw = (d: number) => prog(t, IN + d, IN + d + 0.35, E.out);
-	const flash = clamp(1 - (t - lock) / 0.18) * (t >= lock ? 1 : 0);
+	const flashAt = (t0: number) => clamp(1 - (t - t0) / 0.18) * (t >= t0 ? 1 : 0);
+	const flash = Math.max(flashAt(lock), flashAt(apps));
 	const hl = (y: number, d: number) => <div style={{position: 'absolute', left: 0, top: y, width: 1920 * draw(d), borderTop: `1.5px dashed ${C.guide}`}} />;
 	const vl = (x: number, d: number) => <div style={{position: 'absolute', left: x, top: 0, height: 1080 * draw(d), borderLeft: `1.5px dashed ${C.guide}`}} />;
 	const anchor = (x: number, y: number, d: number) => <div style={{position: 'absolute', left: x - 6, top: y - 6, width: 12, height: 12, border: `2px solid ${C.orange}`, background: C.paper, transform: `scale(${spr(t, IN + d, 30, 0.6)})`}} />;
@@ -81,17 +85,18 @@ export const SLogo: React.FC<{t: number}> = ({t}) => {
 				</div>
 				<Typed t={t} x={0} y={0} size={132} font={F.head} weight={600} lineHeight={1} cps={40} keys={[{t: IN + 0.2, text: 'Tutorial Autopilot'}]} />
 			</div>
-			<Typed t={t} x={MX} y={MY + MS + 54} size={58} cps={56} keys={[{t: at(62), text: 'STOP PAUSING ~TUTORIALS~.'}]} />
+			<Typed t={t} x={MX} y={MY + MS + 54} size={58} cps={56} keys={[{t: hit('chant1'), text: 'STOP PAUSING ~TUTORIALS~.'}]} />
 			{t >= lock ? (
 				<div style={{position: 'absolute', left: MX, top: 700, display: 'flex', gap: 24}}>
 					{plates.map((p, i) => {
 						const s = spr(t, lock + i * 0.03, 26, 0.68);
+						const ck = t >= apps ? spr(t, apps + i * 0.05, 30, 0.55) : 0;
 						return (
 							<div key={i} style={{position: 'relative', width: PW, height: PH, transform: `translateY(${(1 - s) * 60}px) scale(${0.9 + 0.1 * s})`, opacity: clamp(s * 2)}}>
 								<Plate box={{x: 0, y: 0, w: PW, h: PH}} radius={10}>
 									{p}
 								</Plate>
-								<div style={{position: 'absolute', right: -12, top: -12, width: 40, height: 40, borderRadius: 20, background: C.orange, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+								<div style={{position: 'absolute', right: -12, top: -12, width: 40, height: 40, borderRadius: 20, background: C.orange, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `scale(${ck})`}}>
 									<svg width="22" height="22" viewBox="0 0 14 14">
 										<path d="M3 7.2 L6 10 L11 4" fill="none" stroke="#160C06" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
 									</svg>

@@ -13,7 +13,7 @@ import {PIVOT} from './data';
 const INSERT = {x: 258, y: 44, w: 58, h: 24};
 const PIVOT_ITEM = {x: 300, y: 292, w: 282, h: 32};
 
-/** Teach me: the tutorial pauses on "pause it", you click on "click it" and "crack it", it takes back over on "switch" and finishes on "update it" */
+/** Teach me: the tutorial pauses on verb 42, you click on verbs 44 and 46, it takes back over on verb 47 and finishes on verb 48 */
 export const STeach: React.FC<{t: number}> = ({t}) => {
 	const t0 = at(40);
 	const k = {menu: at(43), create: at(45) + 0.1, rows: at(47), values: at(47) + 0.08, cols: at(47) + 0.16, format: at(47) + 0.26};

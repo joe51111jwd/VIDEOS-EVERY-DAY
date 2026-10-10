@@ -7,4 +7,4 @@ cd "$(dirname "$0")"
 PY=${PY:-python}
 for st in cube empty torus smooth; do $PY donut.py -- vp $st 0 119; done
 for st in icing color sprinkles; do $PY donut.py -- vp $st 0 118 2; done   # heavy stages: even frames only
-$PY donut.py -- cy final 96 118 2                                         # Cycles render for "press it"
+$PY donut.py -- cy final 96 118 2                                         # Cycles render for the final shot

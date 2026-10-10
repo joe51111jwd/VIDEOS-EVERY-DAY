@@ -59,7 +59,7 @@ export const DonutScreen: React.FC<{t: number; zoom?: number}> = ({t, zoom = 0})
 	const cur = Math.min(DONUT.steps.length - 0.01, done + Math.min(0.95, (t - (done ? at(done + 3) : at(3))) / 0.47));
 	const tpos = lerp(DONUT.pos[done] ?? 7391, DONUT.pos[done + 1] ?? 7391, Math.min(1, (t - (done ? at(done + 3) : at(3))) / 0.47));
 	const zs = 1 + 0.32 * zoom;
-	const O = {x: 1440, y: 56}; // zoom pivot: the viewport shading buttons stay put for "press it"
+	const O = {x: 1440, y: 56}; // zoom pivot: the viewport shading buttons stay put for the render click
 	const Z = (q: {x: number; y: number}) => ({x: O.x + (q.x - O.x) * zs, y: O.y + (q.y - O.y) * zs});
 	const p = Z(cursorAt(t, PTR()));
 	const clicks = [4, 5, 6, 7, 8, 9, 11].map((i) => at(i) - 0.04);
@@ -96,7 +96,7 @@ export const DonutScreen: React.FC<{t: number; zoom?: number}> = ({t, zoom = 0})
 	);
 };
 
-/** "IT DOES THE TUTORIAL FOR YOU." beside your Blender building the donut; on "zoom it" the plate takes the frame */
+/** "IT DOES THE TUTORIAL FOR YOU." beside your Blender building the donut; on verb 11 the plate takes the frame */
 export const SBLENDER_IN = () => at(4) - BEAT / 2;
 export const SBlender: React.FC<{t: number}> = ({t}) => {
 	const z = prog(t, at(10) - 0.18, at(10) + 0.22, E.inOut);

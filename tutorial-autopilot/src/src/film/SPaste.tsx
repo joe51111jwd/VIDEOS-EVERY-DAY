@@ -11,13 +11,13 @@ import {DONUT, STEP_LIST} from './data';
 
 const thumb = <BlenderUI s={{stage: 'sprinkles', frame: 96, shading: 'material', active: 'Sprinkles', objects: ['Donut', 'Icing', 'Sprinkles'], modifiers: [], tab: 'mat', material: {name: 'Icing', color: '#F39AB8'}}} />;
 
-/** the steps it wrote: rows type in one group per beat, the count gets its check on "check it" */
+/** the steps it wrote: rows type in one group per beat, the count gets its check on verb 22 */
 const StepsCard: React.FC<{t: number; x: number; y: number}> = ({t, x, y}) => {
 	const t0 = at(20);
 	const show = clamp(spr(t, t0 - 0.05, 24, 0.8));
 	const rowH = 54;
 	const groups = [at(20), at(21), at(22)];
-	// rows 0..5 on load, 6..11 on check, then it races to 41 on "quick"
+	// rows 0..5 on load, 6..11 on check, then it races to 41 on verb 23
 	const rowBirth = (i: number) => (i < 6 ? groups[0] + i * 0.05 : i < 12 ? groups[1] + (i - 6) * 0.05 : groups[2] + (i - 12) * 0.012);
 	const n = STEP_LIST.length;
 	const total = 41;
@@ -68,8 +68,8 @@ const StepsCard: React.FC<{t: number; x: number; y: number}> = ({t, x, y}) => {
 	);
 };
 
-/** "PASTE ANY TUTORIAL." (cut on "cut it", the link lands on "paste it", resolves on "save it"),
- *  then "IT WRITES THE STEPS." on "load it"; "Do it for me" goes down on "rewrite it" */
+/** "PASTE ANY TUTORIAL." (cut on verb 18, the link lands on verb 19, resolves on verb 20),
+ *  then "IT WRITES THE STEPS." on verb 21; "Do it for me" goes down on verb 24 */
 export const SPaste: React.FC<{t: number}> = ({t}) => {
 	const t0 = at(17);
 	const stepsOn = t >= at(20) - 0.05;
