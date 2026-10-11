@@ -3,7 +3,7 @@ import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {BoardFrame, FlipWipe} from '../flap/Scenes';
 import {Board, boardSize, counter, geom, schedule, Msg} from '../flap/Flap';
 import {C, E, FPS, H, W, kf, prog} from '../lib/theme';
-import {at} from './beats';
+import {at, hit, WORD, CLUNK, DING, END} from './beats';
 import {Phone, Notif} from '../ui/Phone';
 import {Browser} from '../ui/kit';
 import {AppPrompt} from '../ui/AppPrompt';
@@ -15,15 +15,18 @@ import {Verdict} from '../ui/Verdict';
 // beats are counted from the film's first downbeat, 7 to a bar (Money is in 7/4)
 const b = (k: number) => at(Math.floor(k / 7), k % 7);
 
-// ---- the main board: 14 x 5, carries every big line
+// ---- the main board: 13 x 5, carries every big line
 const MAIN = geom(13, 5, 1700);
 const MAIN_MSGS: Msg[] = [
-	{t: b(1), lines: ['STOP BUILDING', 'THINGS NOBODY', 'WANTS.'], flips: [3, 7]},
-	{t: b(14), lines: ['ggggggggggggg', '', 'BUILD IT.', '', 'ggggggggggggg'], top: 0},
+	{t: b(0), lines: ['STOP BUILDING', 'THINGS NOBODY', 'WANTS.'], flips: [3, 7]}, // the loop's first thud
+	{t: b(14), lines: ['ggggggggggggg', '', 'BUILD IT.', '', 'ggggggggggggg'], top: 0}, // the bass comes in
 	{t: b(50.5), lines: ['NOT OPINIONS.', ''], top: 1},
-	{t: b(51.5), lines: ['NOT OPINIONS.', '', 'MONEY.'], top: 1, flips: [3, 6]},
-	{t: b(56), lines: ['', 'g DEMAND TEST', '', 'KNOW BEFORE', 'YOU BUILD.'], top: 0},
-	{t: b(61), lines: ['roygbvroygbvr', 'g DEMAND TEST', 'bvroygbvroygb', 'KNOW BEFORE', 'YOU BUILD.'], top: 0, spread: 0.0, flips: [2, 4]},
+	{t: hit(WORD), lines: ['NOT OPINIONS.', '', 'MONEY.'], top: 1, flips: [3, 6]}, // whole on the sung word's first consonant
+];
+// ---- the logo: the register clunk after the stop flips the frame to it, the bell fills the prism
+const LOGO_MSGS: Msg[] = [
+	{t: 0, lines: ['', 'g DEMAND TEST', '', 'KNOW BEFORE', 'YOU BUILD.'], top: 0},
+	{t: hit(DING), lines: ['roygbvroygbvr', 'g DEMAND TEST', 'bvroygbvroygb', 'KNOW BEFORE', 'YOU BUILD.'], top: 0, spread: 0, flips: [0, 0]},
 ];
 
 // ---- the step strip over the app: one row
@@ -50,7 +53,8 @@ const IDEA_MSGS: Msg[] = IDEA_ROWS.map((_, i) => ({
 
 // ---- proof: the phone wakes up to buyers
 const NOTIFS: Notif[] = [
-	...['Austin', 'Leeds', 'Toronto', 'Denver', 'Lyon', 'Brooklyn', 'Melbourne'].map((c, i) => ({t: b(5.6 + i * 0.85), body: `Someone in ${c} just tried to buy your socks. $24`})),
+	// one buyer on each sound of the register loop
+	...['Austin', 'Leeds', 'Toronto', 'Denver', 'Lyon', 'Brooklyn', 'Melbourne'].map((c, i) => ({t: b(5 + i), body: `Someone in ${c} just tried to buy your socks. $24`})),
 	{t: b(12), body: 'Verdict: build it. 312 people tried to pay overnight.', go: true},
 ];
 const proofCount = (t: number) => {
@@ -62,13 +66,13 @@ const PROOF_LABEL = geom(12, 1, 860, 0.66, 0.1);
 const PROOF_DIG = geom(4, 1, 860, 0.66, 0.08);
 
 const Proof: React.FC<{t: number}> = ({t}) => {
-	const labelEvs = useMemo(() => schedule([{t: b(5.8), lines: ['TRIED TO PAY'], spread: 0.15}], 12, 1, 7), []);
+	const labelEvs = useMemo(() => schedule([{t: b(5), lines: ['TRIED TO PAY'], spread: 0.15}], 12, 1, 7), []);
 	const label2 = useMemo(() => schedule([{t: b(12), lines: ['OVERNIGHT.'], spread: 0.15}], 12, 1, 9), []);
-	const digits = useMemo(() => [counter(proofCount, 4, b(5), b(13), '0')], []);
+	const digits = useMemo(() => [counter(proofCount, 4, b(4), b(13), '0')], []);
 	const ls = boardSize(PROOF_LABEL);
 	const ds = boardSize(PROOF_DIG);
 	const x0 = 900;
-	const push = 1 + 0.035 * prog(t, b(5), b(13), E.lin);
+	const push = 1 + 0.035 * prog(t, b(4), b(13), E.lin);
 	return (
 		<AbsoluteFill style={{background: C.housing}}>
 			<div style={{position: 'absolute', inset: 0, transform: `scale(${push})`}}>
@@ -133,14 +137,19 @@ export const Film: React.FC = () => {
 	const mainEvs = useMemo(() => schedule(MAIN_MSGS, 13, 5, 3), []);
 	const stripEvs = useMemo(() => schedule(STRIP_MSGS, 21, 1, 5), []);
 	const ideaEvs = useMemo(() => schedule(IDEA_MSGS, 24, 6, 11, false), []);
+	const logoEvs = useMemo(() => schedule(LOGO_MSGS, 13, 5, 13), []);
 	const main = (tt: number, push?: [number, number, number]) => <BoardFrame t={tt} evs={mainEvs} g={MAIN} push={push} />;
+	const tw = hit(CLUNK);
 
-	if (t < b(5)) return main(t, [0, b(5), 0.04]);
-	if (t < b(5) + 0.36) return <FlipWipe t={t} t0={b(5)} A={main(t)} B={<Proof t={t} />} />;
+	if (t < b(4)) return main(t, [0, b(4), 0.04]);
+	if (t < b(4) + 0.36) return <FlipWipe t={t} t0={b(4)} A={main(t, [0, b(4), 0.04])} B={<Proof t={t} />} />;
 	if (t < b(13)) return <Proof t={t} />;
 	if (t < b(18)) return main(t, [b(13), b(18), 0.05]);
-	if (t < b(18) + 0.36) return <FlipWipe t={t} t0={b(18)} A={main(t)} B={<Steps t={t} stripEvs={stripEvs} />} />;
+	if (t < b(18) + 0.36) return <FlipWipe t={t} t0={b(18)} A={main(t, [b(13), b(18), 0.05])} B={<Steps t={t} stripEvs={stripEvs} />} />;
 	if (t < b(43)) return <Steps t={t} stripEvs={stripEvs} />;
 	if (t < b(50)) return <BoardFrame t={t} evs={ideaEvs} g={IDEAS} push={[b(43), b(50), 0.03]} />;
-	return main(t, [b(50), b(64), 0.05]);
+	if (t < tw) return main(t, [b(50), tw, 0.05]);
+	const logo = <BoardFrame t={t} evs={logoEvs} g={MAIN} push={[tw, END, 0.03]} />;
+	if (t < tw + 0.36) return <FlipWipe t={t} t0={tw} A={main(t, [b(50), tw, 0.05])} B={logo} />;
+	return logo;
 };

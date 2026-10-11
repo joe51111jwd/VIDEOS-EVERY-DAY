@@ -18,4 +18,10 @@ node stills.mjs Film out/f 15 300 900          # check stills first
 npx remotion render src/index.ts Film out/film.mp4 --muted   # then mux the song with ffmpeg
 ```
 
-Timing lives in `src/src/film/beats.ts`: `at(bar, beat)` on a 7/4 grid. Until the song lands it is a placeholder at 122 BPM.
+Timing lives in `src/src/film/beats.ts`: `at(bar, beat)` on the song's own 7/4 grid (the tape loop repeats every 3.552 s).
+
+## Sound
+
+`src/tools/audio/edit.py` condenses the song to 32 s from James's file and its demucs stems (kept outside the repo):
+two bars of the register loop alone, the bass, the band, the first sung word, a dead stop, then one more register clunk and bell for the logo.
+The cut between bars 3 and 5 is made one stem at a time, each just before its next attack, so nothing plays twice.
