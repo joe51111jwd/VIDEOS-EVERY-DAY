@@ -1,0 +1,4 @@
+node_modules/
+out/
+# the song and anything cut from it: James's upload, never committed (public repo)
+public/music/
