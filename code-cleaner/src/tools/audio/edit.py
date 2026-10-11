@@ -6,12 +6,10 @@ Usage:
   python3 edit.py <stems/htdemucs/psa dir> <out.wav>
 
 Edit (song bars, bar n = beats 4n..4n+4, beat k = B0 + k*P):
-  film 0.0   intro line over the quiet intro (full mix), vocal out after the name
-  film 2.788 the drop (bar 1)           bars 1-4
-  film 13.54 the beat drops out          bars 23-24 (end of the breakdown, vocal stripped)
-  film 18.92 the beat slams back         bars 25-26
-  film 24.29 the last two bars           bars 47-48, the beat stops on its own
-Every splice sits on a downbeat, keeps the 4-bar loop phase, and uses a 26 ms equal-power
+  film 0.0   the opening line over the quiet intro (full mix), vocal out after the name
+  film 2.788 the drop, on the name       bars 1-8, the beat plays straight through
+  film 24.29 one splice into the end     bars 45-48, the beat stops on its own
+The splice sits on a downbeat, keeps the 4-bar loop phase, and uses a 26 ms equal-power
 crossfade that ends just before the incoming kick so the transient stays whole.
 """
 import sys
@@ -35,19 +33,10 @@ g[:a] = 1
 g[a:b] = np.cos(np.linspace(0, np.pi / 2, b - a)) ** 2
 mix = inst + voc * g[:, None]
 
-# the breakdown (bars 23-24) is ~19 dB under the beat once the rap is gone; lift it 7 dB so the
-# break reads as a held breath, not dead air, and bring it back to unity before the pickup into bar 25
-lift = np.ones(len(inst))
-up, top, dn = S(beat(92) - 0.03), S(beat(92) - 0.01), S(beat(100) - 0.10)
-lift[up:top] = np.linspace(1, 10 ** (7 / 20), top - up)
-lift[top:dn] = 10 ** (7 / 20)
-lift[dn:dn + S(0.06)] = np.linspace(10 ** (7 / 20), 1, S(0.06))
-mix = mix * lift[:, None]
 
 segs = [  # (song start, song end) — end is the next downbeat
-    (beat(0) - PRE, beat(20)),
-    (beat(92), beat(108)),
-    (beat(188), beat(196)),
+    (beat(0) - PRE, beat(36)),
+    (beat(180), beat(196)),
 ]
 XF = S(0.026)      # crossfade length
 LEAD = S(0.004)    # crossfade ends this long before the incoming downbeat
@@ -87,5 +76,4 @@ sf.write(out, out_sig.astype(np.float32), sr, subtype='PCM_24')
 
 film = lambda k: PRE + k * P
 print(f'length {len(out_sig) / sr:.3f} s  lufs_in {lufs:.1f}  -> {meter.integrated_loudness(out_sig):.1f} LUFS  tp {tp:.1f} -> {tp2:.1f} dBTP')
-print('film beats: drop 4 =', round(film(4), 3), '| break 20 =', round(film(20), 3), '| slam 28 =', round(film(28), 3),
-      '| last bars 36 =', round(film(36), 3), '| end 44 =', round(film(44), 3))
+print('film beats: drop 4 =', round(film(4), 3), '| splice 36 =', round(film(36), 3), '| end 52 =', round(film(52), 3))

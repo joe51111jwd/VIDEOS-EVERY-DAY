@@ -2,23 +2,33 @@
   "name": "code-cleaner-video",
   "private": true,
   "type": "module",
-  "scripts": {"studio": "remotion studio", "typecheck": "tsc --noEmit"},
+  "scripts": {
+    "studio": "remotion studio",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@react-three/fiber": "^9.1.2",
     "@remotion/bundler": "4.0.533",
     "@remotion/cli": "4.0.533",
+    "@remotion/motion-blur": "^4.0.533",
     "@remotion/renderer": "4.0.533",
+    "@remotion/three": "^4.0.533",
     "@types/react": "^19.0.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.533",
+    "three": "^0.170.0",
     "typescript": "^5.6.0"
   },
   "devDependencies": {
-    "shiki": "^1.24.0",
-    "fast-check": "^3.23.0",
-    "tsx": "^4.19.0",
     "@fontsource-variable/bricolage-grotesque": "^5.1.0",
+    "@fontsource-variable/geist-mono": "^5.1.0",
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
-    "@fontsource-variable/geist-mono": "^5.1.0"
+    "@types/three": "^0.170.0",
+    "fast-check": "^3.23.0",
+    "shiki": "^1.24.0",
+    "tsx": "^4.19.0"
   }
 }

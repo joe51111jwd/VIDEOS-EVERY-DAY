@@ -4,6 +4,8 @@ import {continueRender, delayRender, staticFile} from 'remotion';
 const FONTS: [string, string, string, string?][] = [
 	['Bricolage', '200 800', 'Bricolage-var.woff2', '75% 100%'],
 	['JetBrains Mono', '100 800', 'JetBrainsMono-var.woff2'],
+	['Geist', '100 900', 'Geist-var.woff2'],
+	['Geist Mono', '100 900', 'GeistMono-var.woff2'],
 ];
 if (typeof document !== 'undefined' && typeof FontFace !== 'undefined') {
 	const h = delayRender('fonts');
@@ -54,4 +56,22 @@ export const C = {
 export const F = {
 	type: 'Bricolage, sans-serif',
 	mono: '"JetBrains Mono", ui-monospace, monospace',
+};
+
+/** rough 2 ("Lossless"): light in a dark 3D space */
+export const L = {
+	bg: '#000000',
+	ink: '#F5F5F7',
+	sub: '#86868B',
+	dim: '#3A3A3C',
+	mint: '#3DF5B0',
+	mintDeep: '#0FB57E',
+	red: '#FF453A',
+	amber: '#FFD60A',
+	glass: 'rgba(28,30,34,0.72)',
+	edge: 'rgba(255,255,255,0.10)',
+};
+export const LF = {
+	sans: 'Geist, "Inter Tight", system-ui, sans-serif',
+	mono: '"Geist Mono", "JetBrains Mono", ui-monospace, monospace',
 };
